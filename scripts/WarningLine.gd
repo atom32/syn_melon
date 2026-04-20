@@ -25,11 +25,46 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	area_exited.connect(_on_area_exited)
 
+	# 设置虚线样式
+	_setup_dashed_line()
+
 	print("警戒线：初始化完成")
 	print("警戒线：position =", position)
 	print("警戒线：collision_layer =", collision_layer)
 	print("警戒线：collision_mask =", collision_mask)
 	print("警戒线：monitoring =", monitoring)
+
+
+## 设置虚线样式（创建多个 ColorRect 节点）
+func _setup_dashed_line() -> void:
+	# 虚线参数
+	var dash_length = 30.0   # 实线长度
+	var gap_length = 15.0   # 间隙长度
+	var start_x = -550.0
+	var end_x = 550.0
+	var y = -2.0  # 让线居中（线宽4，所以偏移2）
+	var line_height = 4.0
+	var line_color = Color(1, 0, 0, 0.8)
+
+	var current_x = start_x
+	var segment_index = 0
+
+	while current_x < end_x:
+		var segment_end = min(current_x + dash_length, end_x)
+
+		# 为每个实线段创建一个 ColorRect 节点
+		var rect = ColorRect.new()
+		rect.name = "DashSegment_%d" % segment_index
+		rect.position = Vector2(current_x, y)
+		rect.size = Vector2(segment_end - current_x, line_height)
+		rect.color = line_color
+		rect.z_index = 100  # 确保显示在最前面
+		add_child(rect)
+
+		current_x = segment_end + gap_length
+		segment_index += 1
+
+	print("警戒线：创建了 %d 个虚线段" % segment_index)
 
 
 ## 水果进入警戒区域
@@ -42,11 +77,16 @@ func _on_area_entered(area: Area2D) -> void:
 		print("警戒线：不是水果的探测器，忽略")
 		return
 
-	print("警戒线：检测到水果等级 %d，冷却时间: %.2f" % [fruit.level, fruit._spawn_cooldown])
+	print("警戒线：检测到水果等级 %d，冷却时间: %.2f, freeze: %s" % [fruit.level, fruit._spawn_cooldown, fruit.freeze])
 
 	# 检查是否在冷却期内
 	if fruit._spawn_cooldown > SPAWN_COOLDOWN:
 		print("警戒线：水果在冷却期内，忽略")
+		return
+
+	# 检查是否是预览状态（被 freeze 的水果是预览水果）
+	if fruit.freeze:
+		print("警戒线：预览水果，忽略")
 		return
 
 	# 如果已经在追踪中，重置计时器
@@ -117,6 +157,12 @@ func _physics_process(delta: float) -> void:
 		# 检查是否还在冷却期
 		if fruit._spawn_cooldown > SPAWN_COOLDOWN:
 			fruits_to_remove.append(fruit)
+			continue
+
+		# 检查是否变成预览状态（被 freeze 的水果）
+		if fruit.freeze:
+			fruits_to_remove.append(fruit)
+			print("警戒线：水果变成预览状态，停止追踪")
 			continue
 
 		# 计算停留时间

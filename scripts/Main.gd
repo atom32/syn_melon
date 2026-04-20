@@ -15,11 +15,17 @@ const COOLDOWN_TIME: float = 0.5
 # UI 引用
 @onready var ui_label_next: Label = $UIBackground/NextLabel
 @onready var ui_label_score: Label = $UIBackground/ScoreLabel
-@onready var ui_preview: ColorRect = $UIBackground/PreviewContainer/Preview
+@onready var ui_preview_container: Control = $UIBackground/PreviewContainer
 @onready var cooldown_timer: Timer = $CooldownTimer
 
 # 当前预览水果（跟随鼠标）
 var _preview_fruit: Fruit = null
+
+# UI 预览水果（固定在 UI 上）
+var _ui_preview_fruit: Fruit = null
+
+# 水果场景引用
+var _fruit_scene: PackedScene = preload("res://scenes/Fruit.tscn")
 
 # 是否可以发射
 var _can_spawn: bool = true
@@ -126,6 +132,9 @@ func _on_mouse_released() -> void:
 	_can_spawn = false
 	cooldown_timer.start()
 
+	# 更新 UI 显示下一个水果
+	_update_ui()
+
 	print("Main.gd: 发射水果，开始冷却")
 
 
@@ -165,7 +174,16 @@ func _update_ui() -> void:
 	var fruit_names: Array = ["樱桃", "草莓", "葡萄", "橙子", "柿子", "桃子", "菠萝", "椰子", "半个西瓜", "大西瓜", "超级大西瓜"]
 	ui_label_next.text = "下一个: %s" % fruit_names[next_level]
 
-	# 更新预览颜色
-	var config: Dictionary = Fruit.FRUIT_CONFIG
-	var color: Color = config[next_level]["color"]
-	ui_preview.color = color
+	# 更新 UI 预览水果
+	if _ui_preview_fruit and is_instance_valid(_ui_preview_fruit):
+		_ui_preview_fruit.queue_free()
+
+	_ui_preview_fruit = _fruit_scene.instantiate()
+	_ui_preview_fruit.level = next_level
+	_ui_preview_fruit.freeze = true
+
+	# 将水果放置在容器中心
+	var container_size = ui_preview_container.size
+	_ui_preview_fruit.position = Vector2(container_size.x / 2, container_size.y / 2)
+
+	ui_preview_container.add_child(_ui_preview_fruit)
