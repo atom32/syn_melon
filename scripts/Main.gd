@@ -5,9 +5,12 @@ extends Node2D
 # 发射器位置
 const SPAWN_Y: float = 150.0
 
-# 边界限制
-const X_MIN_LIMIT: float = 100.0
-const X_MAX_LIMIT: float = 1050.0
+# 边界限制（动态计算）
+var X_MIN_LIMIT: float = 0.0
+var X_MAX_LIMIT: float = 0.0
+
+# 边界安全距离（px）
+const WALL_MARGIN: float = 10.0
 
 # 发射冷却时间（秒）
 const COOLDOWN_TIME: float = 0.5
@@ -37,11 +40,46 @@ func _ready() -> void:
 	cooldown_timer.one_shot = true
 	cooldown_timer.timeout.connect(_on_cooldown_finished)
 
+	# 动态计算游戏边界
+	_calculate_game_boundaries()
+
 	# 延迟连接 GameManager 信号（避免 autoload 初始化问题）
 	call_deferred("_connect_game_manager_signals")
 
 	# 更新初始 UI
 	_update_ui()
+
+
+## 动态计算游戏边界（基于墙壁碰撞体）
+func _calculate_game_boundaries() -> void:
+	# 获取左右墙的碰撞形状
+	var left_wall = $LeftWall/CollisionShape2D
+	var right_wall = $RightWall/CollisionShape2D
+
+	if not left_wall or not right_wall:
+		push_error("无法找到墙壁碰撞体！使用默认边界")
+		X_MIN_LIMIT = 100.0
+		X_MAX_LIMIT = 1050.0
+		return
+
+	# 获取碰撞形状和全局位置
+	var left_shape = left_wall.shape as RectangleShape2D
+	var right_shape = right_wall.shape as RectangleShape2D
+
+	var left_global_pos = left_wall.global_position
+	var right_global_pos = right_wall.global_position
+
+	# 计算实际碰撞边界（碰撞形状是矩形，中心在global_position）
+	var left_wall_inner = left_global_pos.x + left_shape.size.x / 2.0
+	var right_wall_inner = right_global_pos.x - right_shape.size.x / 2.0
+
+	# 设置边界（留出安全距离）
+	X_MIN_LIMIT = left_wall_inner + WALL_MARGIN
+	X_MAX_LIMIT = right_wall_inner - WALL_MARGIN
+
+	print("Main.gd: 动态计算边界")
+	print("  左墙内边界: %.1f, 右墙内边界: %.1f" % [left_wall_inner, right_wall_inner])
+	print("  X范围: %.1f 到 %.1f" % [X_MIN_LIMIT, X_MAX_LIMIT])
 
 
 func _process(delta: float) -> void:

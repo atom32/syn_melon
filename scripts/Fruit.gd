@@ -127,6 +127,9 @@ func _ready() -> void:
 	# 连接碰撞信号
 	body_entered.connect(_on_body_entered)
 
+	# 开启持续碰撞检测（防止合成后的水果已经在接触状态）
+	set_physics_process(true)
+
 	# 初始化水果属性
 	_update_fruit_properties()
 
@@ -138,6 +141,62 @@ func _physics_process(delta: float) -> void:
 	# 处理冷却时间
 	if _spawn_cooldown > 0:
 		_spawn_cooldown -= delta
+	# 冷却结束后，尝试触发与正在接触的水果的合成
+	elif not _is_merging:
+		_try_merge_with_contacts()
+
+
+## 尝试与正在接触的水果合成
+func _try_merge_with_contacts() -> void:
+	# 获取所有正在碰撞的物体
+	var colliding_bodies = get_colliding_bodies()
+
+	for body in colliding_bodies:
+		# 检查是否是水果
+		if not body is Fruit:
+			continue
+
+		var other_fruit: Fruit = body
+
+		# 检查等级是否相同
+		if level != other_fruit.level:
+			continue
+
+		# 检查是否达到最高等级
+		if level >= 10:
+			continue
+
+		# 检查对方冷却时间
+		if other_fruit._spawn_cooldown > 0:
+			continue
+
+		# 检查对方是否已经在处理合成
+		if other_fruit._is_merging:
+			continue
+
+		# 创建合成对的唯一标识符
+		var merge_key: String
+		if _fruit_id < other_fruit._fruit_id:
+			merge_key = "%d_%d" % [_fruit_id, other_fruit._fruit_id]
+		else:
+			merge_key = "%d_%d" % [other_fruit._fruit_id, _fruit_id]
+
+		# 检查这个合成对是否已经在处理中
+		if merge_key in _processing_merges:
+			continue
+
+		# 标记为正在处理
+		_is_merging = true
+		other_fruit._is_merging = true
+
+		# 将合成对添加到处理集合中
+		_processing_merges[merge_key] = true
+
+		# 使用 call_deferred 延迟执行合成逻辑
+		call_deferred("_merge_fruits", other_fruit, merge_key)
+
+		# 每次只处理一个合成，避免快速连续触发
+		break
 
 
 ## 根据等级更新水果属性
@@ -304,6 +363,10 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	var new_fruit: Fruit = _fruit_scene.instantiate()
 	new_fruit.level = level + 1
 	new_fruit.global_position = spawn_position
+
+	# 获取 GameManager 并连接合成信号
+	var gm = get_node("/root/GameManager")
+	new_fruit.fruit_merged.connect(gm._on_fruit_merged)
 
 	# 添加到当前水果的父节点（而不是 current_scene）
 	get_parent().add_child(new_fruit)
