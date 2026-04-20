@@ -9,18 +9,47 @@ const SPAWN_Y: float = 150.0
 const X_MIN_LIMIT: float = 100.0
 const X_MAX_LIMIT: float = 1050.0
 
+# 发射冷却时间（秒）
+const COOLDOWN_TIME: float = 0.5
+
 # UI 引用
 @onready var ui_label_next: Label = $UIBackground/NextLabel
 @onready var ui_label_score: Label = $UIBackground/ScoreLabel
 @onready var ui_preview: ColorRect = $UIBackground/PreviewContainer/Preview
+@onready var cooldown_timer: Timer = $CooldownTimer
+
+# 当前预览水果（跟随鼠标）
+var _preview_fruit: Fruit = null
+
+# 是否可以发射
+var _can_spawn: bool = true
 
 
 func _ready() -> void:
+	# 设置冷却计时器
+	cooldown_timer.wait_time = COOLDOWN_TIME
+	cooldown_timer.one_shot = true
+	cooldown_timer.timeout.connect(_on_cooldown_finished)
+
 	# 延迟连接 GameManager 信号（避免 autoload 初始化问题）
 	call_deferred("_connect_game_manager_signals")
 
 	# 更新初始 UI
 	_update_ui()
+
+
+func _process(delta: float) -> void:
+	# 如果有预览水果，跟随鼠标移动
+	if _preview_fruit and _preview_fruit.is_inside_tree():
+		var mouse_pos = get_global_mouse_position()
+		var clamped_x = clamp(mouse_pos.x, X_MIN_LIMIT, X_MAX_LIMIT)
+		_preview_fruit.global_position = Vector2(clamped_x, SPAWN_Y)
+
+
+## 冷却结束回调
+func _on_cooldown_finished() -> void:
+	_can_spawn = true
+	print("Main.gd: 冷却结束，可以再次发射")
 
 
 ## 连接 GameManager 信号
@@ -34,31 +63,70 @@ func _connect_game_manager_signals() -> void:
 	gm.fruit_spawned.connect(_on_fruit_spawned)
 	gm.fruit_merged.connect(_on_fruit_merged)
 	gm.score_changed.connect(_on_score_changed)
+	gm.game_over.connect(_on_game_over)
 
 
 func _input(event: InputEvent) -> void:
-	# 检测鼠标左键点击
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		# 检查是否在 UI 区域内点击
-		if event.position.y > 100:
-			_launch_fruit(event.position.x)
+	# 只处理鼠标左键
+	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT):
+		return
+
+	# 检查是否在 UI 区域内
+	if event.position.y <= 100:
+		return
+
+	# 按下鼠标：创建预览水果
+	if event.pressed:
+		_on_mouse_pressed(event.position.x)
+	# 松开鼠标：发射水果
+	else:
+		_on_mouse_released()
 
 
-## 发射水果
-func _launch_fruit(x_position: float) -> void:
-	# 限制 X 轴范围
-	var spawn_x: float = clamp(x_position, X_MIN_LIMIT, X_MAX_LIMIT)
-	var spawn_position: Vector2 = Vector2(spawn_x, SPAWN_Y)
+## 鼠标按下处理
+func _on_mouse_pressed(x_position: float) -> void:
+	# 检查冷却状态
+	if not _can_spawn:
+		print("Main.gd: 冷却中，无法生成预览水果")
+		return
 
-	# 通过 GameManager 创建水果
+	# 检查是否已有预览水果
+	if _preview_fruit and is_instance_valid(_preview_fruit):
+		print("Main.gd: 已有预览水果")
+		return
+
+	# 创建预览水果
 	var gm = get_node("/root/GameManager")
-	var fruit: Fruit = gm.spawn_fruit(spawn_position)
-	add_child(fruit)
+	_preview_fruit = gm.spawn_fruit(Vector2(0, SPAWN_Y))
+	add_child(_preview_fruit)
 
-	# 更新 UI
-	_update_ui()
+	# 冻结物理（不受重力影响）
+	_preview_fruit.freeze = true
 
-	print("发射水果等级 %d 到位置: ", fruit.level, spawn_position)
+	# 设置初始位置
+	var clamped_x = clamp(x_position, X_MIN_LIMIT, X_MAX_LIMIT)
+	_preview_fruit.global_position = Vector2(clamped_x, SPAWN_Y)
+
+	print("Main.gd: 创建预览水果等级 %d 在 x=%.0f" % [_preview_fruit.level, clamped_x])
+
+
+## 鼠标松开处理
+func _on_mouse_released() -> void:
+	# 检查是否有预览水果
+	if not _preview_fruit or not is_instance_valid(_preview_fruit):
+		return
+
+	# 解冻物理
+	_preview_fruit.freeze = false
+
+	# 清空预览引用
+	_preview_fruit = null
+
+	# 开始冷却
+	_can_spawn = false
+	cooldown_timer.start()
+
+	print("Main.gd: 发射水果，开始冷却")
 
 
 ## 水果发射回调
@@ -76,6 +144,15 @@ func _on_fruit_merged(old_level: int, new_level: int, position: Vector2) -> void
 ## 分数变化回调
 func _on_score_changed(new_score: int) -> void:
 	ui_label_score.text = "分数: %d" % new_score
+
+
+## 游戏结束回调
+func _on_game_over() -> void:
+	# 显示游戏结束信息
+	print("Main.gd: 游戏结束信号已接收")
+
+	# 可以在这里添加游戏结束 UI
+	# 例如：显示 Game Over 标签、最终分数等
 
 
 ## 更新 UI 显示

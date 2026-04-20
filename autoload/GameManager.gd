@@ -8,6 +8,7 @@ extends Node
 signal fruit_spawned(fruit, level: int)
 signal fruit_merged(old_level: int, new_level: int, position: Vector2)
 signal score_changed(new_score: int)
+signal game_over()
 
 # 游戏配置
 const MIN_SPAWN_LEVEL: int = 0

@@ -113,6 +113,13 @@ func _ready() -> void:
 	collision_layer = 1      # 水果在第 1 层
 	collision_mask = 1       # 水果与第 1 层碰撞（其他水果和地面）
 
+	# 设置探测器区域（用于警戒线检测）
+	if has_node("DetectorArea"):
+		var detector = $DetectorArea
+		detector.collision_layer = 8   # 探测器在第 8 层（可被警戒线检测）
+		detector.collision_mask = 0    # 不主动检测任何物体（纯被动）
+		detector.monitorable = true    # 允许被其他 Area2D 检测
+
 	# 开启碰撞监控
 	contact_monitor = true
 	max_contacts_reported = 10
@@ -145,6 +152,13 @@ func _update_fruit_properties() -> void:
 	# 设置新的碰撞形状
 	if collision_shape:
 		collision_shape.shape = new_shape
+
+	# 同时更新探测器区域的碰撞形状
+	if has_node("DetectorArea/DetectorShape"):
+		var detector_shape = $DetectorArea/DetectorShape
+		var detector_new_shape := CircleShape2D.new()
+		detector_new_shape.radius = radius
+		detector_shape.shape = detector_new_shape
 
 	# 创建渐变圆形纹理
 	if sprite:
