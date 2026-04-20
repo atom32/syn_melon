@@ -1,0 +1,94 @@
+extends Node2D
+
+## 合成大西瓜 - 主场景脚本
+
+# 发射器位置
+const SPAWN_Y: float = 150.0
+
+# 边界限制
+const X_MIN_LIMIT: float = 100.0
+const X_MAX_LIMIT: float = 1050.0
+
+# UI 引用
+@onready var ui_label_next: Label = $UIBackground/NextLabel
+@onready var ui_label_score: Label = $UIBackground/ScoreLabel
+@onready var ui_preview: ColorRect = $UIBackground/PreviewContainer/Preview
+
+
+func _ready() -> void:
+	# 延迟连接 GameManager 信号（避免 autoload 初始化问题）
+	call_deferred("_connect_game_manager_signals")
+
+	# 更新初始 UI
+	_update_ui()
+
+
+## 连接 GameManager 信号
+func _connect_game_manager_signals() -> void:
+	# 检查 GameManager 是否存在
+	if not has_node("/root/GameManager"):
+		push_error("GameManager autoload not found!")
+		return
+
+	var gm = get_node("/root/GameManager")
+	gm.fruit_spawned.connect(_on_fruit_spawned)
+	gm.fruit_merged.connect(_on_fruit_merged)
+	gm.score_changed.connect(_on_score_changed)
+
+
+func _input(event: InputEvent) -> void:
+	# 检测鼠标左键点击
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		# 检查是否在 UI 区域内点击
+		if event.position.y > 100:
+			_launch_fruit(event.position.x)
+
+
+## 发射水果
+func _launch_fruit(x_position: float) -> void:
+	# 限制 X 轴范围
+	var spawn_x: float = clamp(x_position, X_MIN_LIMIT, X_MAX_LIMIT)
+	var spawn_position: Vector2 = Vector2(spawn_x, SPAWN_Y)
+
+	# 通过 GameManager 创建水果
+	var gm = get_node("/root/GameManager")
+	var fruit: Fruit = gm.spawn_fruit(spawn_position)
+	add_child(fruit)
+
+	# 更新 UI
+	_update_ui()
+
+	print("发射水果等级 %d 到位置: ", fruit.level, spawn_position)
+
+
+## 水果发射回调
+func _on_fruit_spawned(fruit: Fruit, level: int) -> void:
+	# 可以在这里添加音效、动画等
+	pass
+
+
+## 水果合成回调
+func _on_fruit_merged(old_level: int, new_level: int, position: Vector2) -> void:
+	# 可以在这里添加特效、音效等
+	pass
+
+
+## 分数变化回调
+func _on_score_changed(new_score: int) -> void:
+	ui_label_score.text = "分数: %d" % new_score
+
+
+## 更新 UI 显示
+func _update_ui() -> void:
+	# 获取 GameManager 引用
+	var gm = get_node("/root/GameManager")
+
+	# 更新下一个水果文本（显示当前待发射的）
+	var next_level: int = gm.get_current_fruit_level()
+	var fruit_names: Array = ["樱桃", "草莓", "葡萄", "橙子", "柿子", "桃子", "菠萝", "椰子", "半个西瓜", "大西瓜", "超级大西瓜"]
+	ui_label_next.text = "下一个: %s" % fruit_names[next_level]
+
+	# 更新预览颜色
+	var config: Dictionary = Fruit.FRUIT_CONFIG
+	var color: Color = config[next_level]["color"]
+	ui_preview.color = color
