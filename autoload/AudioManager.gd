@@ -4,14 +4,26 @@ extends Node
 ## 管理游戏中的所有音效
 
 # 音效播放器
-@onready var collision_player: AudioStreamPlayer = $CollisionPlayer
-@onready var merge_player: AudioStreamPlayer = $MergePlayer
-@onready var game_over_player: AudioStreamPlayer = $GameOverPlayer
+var collision_player: AudioStreamPlayer = null
+var merge_player: AudioStreamPlayer = null
+var game_over_player: AudioStreamPlayer = null
 
 
 func _ready() -> void:
-	# 设置音频总线（可选）
-	pass
+	# 动态创建 AudioStreamPlayer 节点
+	collision_player = AudioStreamPlayer.new()
+	collision_player.name = "CollisionPlayer"
+	add_child(collision_player)
+
+	merge_player = AudioStreamPlayer.new()
+	merge_player.name = "MergePlayer"
+	add_child(merge_player)
+
+	game_over_player = AudioStreamPlayer.new()
+	game_over_player.name = "GameOverPlayer"
+	add_child(game_over_player)
+
+	print("AudioManager: 音效播放器初始化完成")
 
 
 ## 播放水果碰撞音效
