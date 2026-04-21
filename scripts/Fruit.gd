@@ -470,37 +470,42 @@ func _create_single_particle(container: Node2D, color: Color, index: int) -> voi
 
 ## 创建飘字得分特效（直接创建，不使用场景文件）
 func _create_floating_score(points: int, position: Vector2) -> void:
-	# 直接创建 Label 节点
-	var floating_score = Label.new()
+	# 创建一个容器节点来控制位置
+	var container = Control.new()
+	container.z_index = 10001
+	container.global_position = position
+	container.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	get_tree().current_scene.add_child(container)
 
-	# 设置基本属性 - 使用 global_position 确保位置正确
-	floating_score.text = "+%d" % points
-	floating_score.z_index = 10001
-	floating_score.global_position = position
+	# 创建 RichTextLabel（比 Label 更可靠）
+	var floating_score = RichTextLabel.new()
+	floating_score.text = "[center][color=white]+%d[/color][/center]" % points
+	floating_score.fit_content = true
 
-	# 设置大小和对齐
-	floating_score.size = Vector2(200, 60)
-	floating_score.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	floating_score.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	# 设置大小
+	floating_score.size = Vector2(300, 100)
 
-	# 设置字体大小（使用主题覆盖）
-	floating_score.add_theme_font_size_override("font_size", 48)
+	# 使用 BBCode 设置样式
+	floating_score.bbcode_enabled = true
 
-	# 设置颜色（使用白色确保最显眼）
-	floating_score.modulate = Color(1, 1, 1, 1)
-
-	# 添加描边效果（黑色粗描边）
+	# 添加描边效果（通过主题）
 	floating_score.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-	floating_score.add_theme_constant_override("outline_size", 5)
+	floating_score.add_theme_constant_override("outline_size", 6)
 
-	# 添加到场景
-	get_tree().current_scene.add_child(floating_score)
+	# 设置字体大小
+	floating_score.add_theme_font_size_override("normal_font_size", 60)
+	floating_score.add_theme_font_size_override("bold_font_size", 60)
 
-	# 验证节点状态
-	print("飘字创建完成 - visible:", floating_score.visible, "position:", floating_score.global_position, "text:", floating_score.text, "size:", floating_score.size)
+	# 确保可见
+	floating_score.modulate = Color(1, 1, 1, 1)
+	floating_score.visible = true
+
+	container.add_child(floating_score)
+
+	print("飘字创建完成 - visible:", floating_score.visible, "text:", floating_score.text, "size:", floating_score.size)
 
 	# 开始动画
-	_animate_floating_score(floating_score, position)
+	_animate_floating_score(container, position)
 
 
 ## 根据分数获取颜色
@@ -516,29 +521,29 @@ func _get_score_color(points: int) -> Color:
 
 
 ## 飘字动画
-func _animate_floating_score(label: Label, start_position: Vector2) -> void:
+func _animate_floating_score(container: Control, start_position: Vector2) -> void:
 	# 确保初始状态完全可见
-	label.modulate = Color(1, 1, 1, 1)
-	label.scale = Vector2(1.5, 1.5)
+	container.modulate = Color(1, 1, 1, 1)
+	container.scale = Vector2(1.5, 1.5)
 
-	print("开始飘字动画 - 初始位置:", label.global_position, "初始透明度:", label.modulate.a)
+	print("开始飘字动画 - 初始位置:", container.global_position)
 
-	var tween = label.create_tween()
+	var tween = container.create_tween()
 	tween.set_parallel()
 
-	# 向上移动（从开始位置向上移动 150 像素）
+	# 向上移动
 	var end_y = start_position.y - 150
-	tween.tween_property(label, "global_position:y", end_y, 2.0)
+	tween.tween_property(container, "global_position:y", end_y, 2.0)
 
-	# 延迟后才开始淡出（前 1 秒保持完全不透明）
-	var fade_tween = label.create_tween()
-	fade_tween.tween_interval(1.0)  # 等待 1 秒
-	fade_tween.tween_property(label, "modulate:a", 0.0, 1.0)  # 然后淡出
+	# 延迟后才开始淡出
+	var fade_tween = container.create_tween()
+	fade_tween.tween_interval(1.0)
+	fade_tween.tween_property(container, "modulate:a", 0.0, 1.0)
 
-	# 缩放动画：先缩小再放大
-	var scale_tween = label.create_tween()
-	scale_tween.tween_property(label, "scale", Vector2(1.8, 1.8), 0.2)
-	scale_tween.tween_property(label, "scale", Vector2(1.0, 1.0), 1.8)
+	# 缩放动画
+	var scale_tween = container.create_tween()
+	scale_tween.tween_property(container, "scale", Vector2(1.8, 1.8), 0.2)
+	scale_tween.tween_property(container, "scale", Vector2(1.0, 1.0), 1.8)
 
 	# 完成后销毁
-	tween.tween_callback(label.queue_free)
+	tween.tween_callback(container.queue_free)
