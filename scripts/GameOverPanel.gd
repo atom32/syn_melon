@@ -5,45 +5,68 @@ extends Panel
 
 signal restart_requested
 
+var title_label: Label = null
 var score_label: Label = null
 var restart_button: Button = null
 
 
 func _ready() -> void:
-	# 获取节点引用（添加延时确保场景树已准备好）
+	# 等待场景完全准备好
 	await ready
 
-	score_label = $VBoxContainer/ScoreLabel
-	restart_button = $VBoxContainer/RestartButton
-
-	# 调试：检查节点是否找到
-	print("GameOverPanel _ready - score_label:", score_label != null, "restart_button:", restart_button != null)
-
-	# 居中显示
-	set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	size = Vector2(400, 300)
-
-	# 设置面板样式
-	add_theme_stylebox_override("panel", get_panel_style())
-
-	# 连接按钮信号
-	if restart_button:
-		restart_button.pressed.connect(_on_restart_pressed)
+	# 动态创建 UI 元素
+	_setup_ui()
 
 	# 初始隐藏
 	visible = false
 
 
-func show_game_over(final_score: int) -> void:
-	# 安全检查
-	if not score_label:
-		print("错误：score_label 为 null！")
-		return
+func _setup_ui() -> void:
+	# 创建 VBoxContainer
+	var vbox = VBoxContainer.new()
+	vbox.name = "VBoxContainer"
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	vbox.position = Vector2(-150, -100)
+	vbox.size = Vector2(300, 200)
+	vbox.theme_override_constants/separation = 30
+	add_child(vbox)
 
-	score_label.text = "最终得分: %d" % final_score
+	# 创建标题
+	title_label = Label.new()
+	title_label.name = "TitleLabel"
+	title_label.text = "游戏结束"
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.theme_override_font_sizes/font_size = 48
+	title_label.size = Vector2(300, 60)
+	vbox.add_child(title_label)
+
+	# 创建分数标签
+	score_label = Label.new()
+	score_label.name = "ScoreLabel"
+	score_label.text = "最终得分: 0"
+	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	score_label.theme_override_font_sizes/font_size = 32
+	score_label.size = Vector2(300, 50)
+	vbox.add_child(score_label)
+
+	# 创建重新开始按钮
+	restart_button = Button.new()
+	restart_button.name = "RestartButton"
+	restart_button.text = "重新开始 (Restart)"
+	restart_button.theme_override_font_sizes/font_size = 24
+	restart_button.size = Vector2(300, 60)
+	restart_button.pressed.connect(_on_restart_pressed)
+	vbox.add_child(restart_button)
+
+	print("GameOverPanel UI 创建完成")
+
+
+func show_game_over(final_score: int) -> void:
+	if score_label:
+		score_label.text = "最终得分: %d" % final_score
+
 	visible = true
 
-	# 获取焦点以便按 Enter 键可以重新开始
 	if restart_button:
 		restart_button.grab_focus()
 
@@ -59,18 +82,3 @@ func _on_restart_pressed() -> void:
 	hide_panel()
 	restart_requested.emit()
 	get_tree().reload_current_scene()
-
-
-func get_panel_style() -> StyleBoxFlat:
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
-	style.corner_radius_top_left = 20
-	style.corner_radius_top_right = 20
-	style.corner_radius_bottom_left = 20
-	style.corner_radius_bottom_right = 20
-	style.border_width_left = 3
-	style.border_width_top = 3
-	style.border_width_right = 3
-	style.border_width_bottom = 3
-	style.border_color = Color(0.5, 0.5, 0.6, 1)
-	return style
