@@ -46,8 +46,8 @@ func _create_particle(color: Color, index: int) -> void:
 	sprite.size = Vector2(12, 12)  # 增大粒子
 	sprite.color = color
 
-	# 设置极高的 z_index 确保粒子显示在最上层
-	sprite.z_index = 10000
+	# 设置 z_index 确保粒子显示在最上层
+	sprite.z_index = 502
 
 	# 计算随机方向和速度
 	var angle = randf() * TAU  # 0 到 360 度

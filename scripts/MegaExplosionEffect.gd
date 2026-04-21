@@ -15,7 +15,7 @@ func _ready() -> void:
 ## 触发超大爆炸特效
 func explode(color: Color, position: Vector2) -> void:
 	global_position = position
-	z_index = 20000
+	z_index = 2000
 
 	# 创建爆炸粒子
 	for i in range(PARTICLE_COUNT):
@@ -40,7 +40,7 @@ func _create_particle(color: Color, index: int) -> void:
 	var size = randf_range(20, 40)
 	particle.size = Vector2(size, size)
 	particle.color = color
-	particle.z_index = 20000
+	particle.z_index = 2001
 	particle.position = Vector2(0, 0)
 
 	add_child(particle)
@@ -63,7 +63,7 @@ func _create_shockwave() -> void:
 	var shockwave = ColorRect.new()
 	shockwave.size = Vector2(10, 10)
 	shockwave.color = Color(1, 1, 1, 0.8)
-	shockwave.z_index = 19999
+	shockwave.z_index = 1999
 	shockwave.position = Vector2(-5, -5)
 
 	add_child(shockwave)

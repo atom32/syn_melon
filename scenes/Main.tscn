@@ -99,5 +99,5 @@ color = Color(0.2, 0.2, 0.3, 1)
 shape = SubResource("RectangleShape2D_ground")
 
 [node name="GameOverPanel" type="Panel" parent="."]
-z_index = 99999
+z_index = 4000
 script = ExtResource("3_gameover")

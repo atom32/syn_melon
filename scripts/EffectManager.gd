@@ -16,7 +16,7 @@ static func create_mega_explosion(parent: Node, position: Vector2, color: Color)
 ## 创建爆炸粒子特效
 static func create_explosion(parent: Node, position: Vector2, color: Color) -> void:
 	var container = Node2D.new()
-	container.z_index = 10000
+	container.z_index = 500
 	container.global_position = position
 	parent.add_child(container)
 
@@ -34,7 +34,7 @@ static func _create_particle(container: Node2D, color: Color, index: int) -> voi
 	var particle = ColorRect.new()
 	particle.size = Vector2(16, 16)
 	particle.color = color
-	particle.z_index = 10000
+	particle.z_index = 501
 	particle.position = Vector2(0, 0)
 
 	container.add_child(particle)
@@ -56,7 +56,7 @@ static func _create_particle(container: Node2D, color: Color, index: int) -> voi
 ## 创建飘字得分特效
 static func create_floating_score(parent: Node, position: Vector2, points: int) -> void:
 	var container = Control.new()
-	container.z_index = 10001
+	container.z_index = 1000
 	container.global_position = position
 	container.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	parent.add_child(container)
