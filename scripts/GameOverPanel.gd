@@ -17,6 +17,9 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	size = Vector2(400, 300)
 
+	# 重要：设置为在暂停时仍可处理输入
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
 	# 动态创建 UI 元素
 	_setup_ui()
 
@@ -70,6 +73,9 @@ func _setup_ui() -> void:
 	restart_button.text = "重新开始 (Restart)"
 	restart_button.add_theme_font_size_override("font_size", 24)
 	restart_button.size = Vector2(300, 60)
+
+	# 重要：按钮也需要在暂停时工作
+	restart_button.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# 连接信号并检查是否成功
 	var connected = restart_button.pressed.connect(_on_restart_pressed)
