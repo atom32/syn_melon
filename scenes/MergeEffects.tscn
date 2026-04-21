@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://explosion_particles"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_shape"]
+radius = 25.0
+
+[resource]
+type="ParticleProcessMaterial"
+uid="uid://b8k9m_particles"
+
+render_lods = [ 0, 0, 0, 0, 0 ]
+
+[instance]
+extents = PackedDataDictionary(0)
+
+[sub_resource type="Gradient" id="Gradient_8xyzh"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.05, 0.2, 1)
+colors = PackedColorArray(1, 1, 1, 0, 0, 0, 0, 0)
+
+
+[node name="ExplosionParticles" type="GPUParticles2D"]
+process_material = SubResource("ParticleProcessMaterial")
+emitting = false
+amount = 32
+lifetime = 0.8
+
+
+[node name="CollisionShape2D" type="CollisionShape2D"]
+shape = SubResource("CircleShape2D_shape")

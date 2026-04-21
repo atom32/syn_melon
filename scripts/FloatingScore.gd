@@ -24,6 +24,9 @@ func show_score(points: int, start_position: Vector2) -> void:
 	# 设置初始位置
 	global_position = start_position
 
+	# 确保 z_index 足够高，显示在所有水果前面
+	z_index = 1000
+
 	# 设置分数文本
 	text = "+%d" % points
 

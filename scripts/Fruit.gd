@@ -434,7 +434,13 @@ func _create_explosion_effect(position: Vector2) -> void:
 
 ## 创建飘字得分特效
 func _create_floating_score(points: int, position: Vector2) -> void:
+	if not _floating_score_scene:
+		print("错误：FloatingScore 场景未加载")
+		return
+
 	var floating_score = _floating_score_scene.instantiate()
 	floating_score.show_score(points, position)
 
 	get_parent().add_child(floating_score)
+
+	print("飘字特效已创建：+%d 分，位置：" % points, position)

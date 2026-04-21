@@ -21,6 +21,9 @@ func _ready() -> void:
 func explode(color: Color, position: Vector2) -> void:
 	global_position = position
 
+	# 确保 z_index 足够高，显示在所有水果前面
+	z_index = 999
+
 	# 创建爆炸粒子
 	for i in range(PARTICLE_COUNT):
 		_create_particle(color, i)
