@@ -216,7 +216,6 @@ func _on_debug_fail_button() -> void:
 	print("Main.gd: 快速失败按钮被点击")
 	var gm = get_node("/root/GameManager")
 	gm.game_over.emit()
-	_on_game_over()
 
 
 ## 更新 UI 显示
