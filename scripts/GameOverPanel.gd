@@ -96,6 +96,10 @@ func _on_restart_pressed() -> void:
 	# 先取消暂停，否则 reload_current_scene 不会生效
 	get_tree().paused = false
 
-	# 等待一帧后再重载场景
-	await get_tree().process_frame
+	# 使用 call_deferred 确保在当前帧完成后重载场景
+	call_deferred("_reload_scene")
+
+
+func _reload_scene() -> void:
+	print("正在重新加载场景...")
 	get_tree().reload_current_scene()
