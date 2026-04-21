@@ -92,6 +92,10 @@ func hide_panel() -> void:
 
 func _on_restart_pressed() -> void:
 	print("重新开始游戏")
-	hide_panel()
-	restart_requested.emit()
+
+	# 先取消暂停，否则 reload_current_scene 不会生效
+	get_tree().paused = false
+
+	# 等待一帧后再重载场景
+	await get_tree().process_frame
 	get_tree().reload_current_scene()

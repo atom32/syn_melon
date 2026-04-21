@@ -47,7 +47,7 @@ offset_bottom = 90.0
 theme_override_font_sizes/font_size = 20
 text = "分数: 0"
 
-[node name="PreviewContainer" type="Control" parent="UIBackground" unique_id=1822015116"]
+[node name="PreviewContainer" type="Control" parent="UIBackground" unique_id=1822015116]
 anchors_preset = 0
 offset_left = 201.0
 offset_top = -26.0
