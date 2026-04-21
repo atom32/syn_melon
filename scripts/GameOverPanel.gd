@@ -17,9 +17,6 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	size = Vector2(400, 300)
 
-	# 设置面板样式
-	add_theme_stylebox_override("panel", get_panel_style())
-
 	# 动态创建 UI 元素
 	_setup_ui()
 
