@@ -23,6 +23,10 @@ const SPAWN_COOLDOWN_TIME: float = 0.1  # 100ms 冷却时间
 # 水果场景引用
 var _fruit_scene: PackedScene = preload("res://scenes/Fruit.tscn")
 
+# 特效场景引用
+var _explosion_scene: PackedScene = preload("res://scenes/ExplosionEffect.tscn")
+var _floating_score_scene: PackedScene = preload("res://scenes/FloatingScore.tscn")
+
 # 水果等级 (0-10)
 @export var level: int = 0:
 	set(value):
@@ -375,6 +379,13 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	# 发射合成信号
 	fruit_merged.emit(level, level + 1, spawn_position)
 
+	# 创建爆炸粒子特效
+	_create_explosion_effect(spawn_position)
+
+	# 计算得分并创建飘字特效
+	var points = (level + 1) * 10
+	_create_floating_score(points, spawn_position)
+
 	# 创建新的水果（等级 + 1）
 	var new_fruit: Fruit = _fruit_scene.instantiate()
 	new_fruit.level = level + 1
@@ -400,3 +411,30 @@ func _cleanup_merge(merge_key: String) -> void:
 	_is_merging = false
 	if merge_key in _processing_merges:
 		_processing_merges.erase(merge_key)
+
+
+## 创建爆炸粒子特效
+func _create_explosion_effect(position: Vector2) -> void:
+	var explosion = _explosion_scene.instantiate()
+	explosion.global_position = position
+
+	# 设置粒子颜色为当前水果的颜色
+	var config = FRUIT_CONFIG[level]
+	var color = config["color"]
+
+	# 设置粒子颜色
+	if explosion.has_method("set_particle_color"):
+		explosion.set_particle_color(color)
+
+	get_parent().add_child(explosion)
+	explosion.explode(color, position)
+
+	print("创建爆炸特效，颜色:", color)
+
+
+## 创建飘字得分特效
+func _create_floating_score(points: int, position: Vector2) -> void:
+	var floating_score = _floating_score_scene.instantiate()
+	floating_score.show_score(points, position)
+
+	get_parent().add_child(floating_score)

@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://floating_score"]
+
+[ext_resource type="Script" path="res://scripts/FloatingScore.gd" id="1_score"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_font"]
+label_settings = SubResource("LabelSettings_font")
+
+
+[node name="FloatingScore" type="Label"]
+offset_left = -50.0
+offset_top = -20.0
+offset_right = 50.0
+offset_bottom = 0.0
+theme_type = ""
+label_settings = SubResource("LabelSettings_font")
+text = "+10"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("1_score")

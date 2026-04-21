@@ -37,11 +37,14 @@ func _ready() -> void:
 
 ## 设置虚线样式（创建多个 ColorRect 节点）
 func _setup_dashed_line() -> void:
+	# 从 BackGround 的 ColorRect 获取左右边界
+	var background = get_parent().get_node("BackGround/ColorRect")
+	var start_x = background.offset_left
+	var end_x = background.offset_right
+
 	# 虚线参数
 	var dash_length = 30.0   # 实线长度
 	var gap_length = 15.0   # 间隙长度
-	var start_x = -550.0
-	var end_x = 550.0
 	var y = -2.0  # 让线居中（线宽4，所以偏移2）
 	var line_height = 4.0
 	var line_color = Color(1, 0, 0, 0.8)
