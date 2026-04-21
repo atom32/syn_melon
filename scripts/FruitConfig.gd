@@ -25,7 +25,7 @@ static func get_color(level: int) -> Color:
 
 
 ## 获取水果名称
-static func get_name(level: int) -> String:
+static func get_fruit_name(level: int) -> String:
 	return get_config(level)["name"]
 
 
