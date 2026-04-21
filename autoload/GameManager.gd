@@ -7,6 +7,7 @@ extends Node
 # 信号
 signal fruit_spawned(fruit, level: int)
 signal fruit_merged(old_level: int, new_level: int, position: Vector2)
+signal mega_fruit_merged(position: Vector2)  # 大西瓜合成信号
 signal score_changed(new_score: int)
 signal game_over()
 
@@ -92,3 +93,13 @@ func reset_game() -> void:
 	current_fruit_level = next_fruit_level
 	_randomize_next_fruit()
 	score_changed.emit(0)
+
+
+## 处理大西瓜合成（特殊奖励）
+func on_mega_fruit_merged(position: Vector2) -> void:
+	var bonus_points: int = 1000
+	score += bonus_points
+	score_changed.emit(score)
+	mega_fruit_merged.emit(position)
+
+	print("🎉 大西瓜合成！奖励 %d 分，总分：%d" % [bonus_points, score])

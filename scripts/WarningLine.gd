@@ -202,5 +202,5 @@ func _trigger_game_over(fruit: Fruit) -> void:
 	var gm = get_node("/root/GameManager")
 	gm.game_over.emit()
 
-	# 暂停物理引擎
+	# 暂停游戏（由 Main.gd 处理面板显示）
 	get_tree().paused = true

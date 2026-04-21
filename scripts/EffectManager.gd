@@ -3,6 +3,16 @@ extends Node
 
 ## 特效管理器 - 统一管理游戏中的视觉反馈特效
 
+
+## 创建超大爆炸特效（大西瓜合成）
+static func create_mega_explosion(parent: Node, position: Vector2, color: Color) -> void:
+	var mega_scene = preload("res://scenes/MegaExplosionEffect.tscn")
+	var mega_explosion = mega_scene.instantiate()
+	mega_explosion.global_position = position
+	parent.add_child(mega_explosion)
+	mega_explosion.explode(color, position)
+
+
 ## 创建爆炸粒子特效
 static func create_explosion(parent: Node, position: Vector2, color: Color) -> void:
 	var container = Node2D.new()

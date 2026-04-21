@@ -20,6 +20,7 @@ const COOLDOWN_TIME: float = 0.5
 @onready var ui_label_score: Label = $UIBackground/ScoreLabel
 @onready var ui_preview_container: Control = $UIBackground/PreviewContainer
 @onready var cooldown_timer: Timer = $CooldownTimer
+@onready var game_over_panel: GameOverPanel = $GameOverPanel
 
 # 当前预览水果（跟随鼠标）
 var _preview_fruit: Fruit = null
@@ -195,11 +196,15 @@ func _on_score_changed(new_score: int) -> void:
 
 ## 游戏结束回调
 func _on_game_over() -> void:
-	# 显示游戏结束信息
 	print("Main.gd: 游戏结束信号已接收")
 
-	# 可以在这里添加游戏结束 UI
-	# 例如：显示 Game Over 标签、最终分数等
+	# 暂停游戏
+	get_tree().paused = true
+
+	# 显示游戏结束面板
+	var gm = get_node("/root/GameManager")
+	var final_score = gm.get_score()
+	game_over_panel.show_game_over(final_score)
 
 
 ## 更新 UI 显示

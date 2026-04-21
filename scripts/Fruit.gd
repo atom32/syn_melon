@@ -195,12 +195,36 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 
 	var spawn_position: Vector2 = (global_position + other_fruit.global_position) / 2.0
 	var fruit_color: Color = FruitConfig.get_color(level)
+	var scene_root = get_tree().current_scene
+	var gm = get_node("/root/GameManager")
 
+	# 检查是否是最高等级合成（大西瓜）
+	if level >= FruitConfig.get_max_level():
+		# 发射合成信号
+		fruit_merged.emit(level, level, spawn_position)
+
+		# 触发超大爆炸特效
+		EffectManager.create_mega_explosion(scene_root, spawn_position, fruit_color)
+
+		# 显示超大得分飘字
+		EffectManager.create_floating_score(scene_root, spawn_position, 1000)
+
+		# 奖励高分
+		gm.on_mega_fruit_merged(spawn_position)
+
+		# 删除旧水果（不生成新水果）
+		call_deferred("queue_free")
+		other_fruit.call_deferred("queue_free")
+		call_deferred("_cleanup_merge", merge_key)
+
+		print("🎉 大西瓜合成！不生成新水果")
+		return
+
+	# 正常合成流程
 	# 发射合成信号
 	fruit_merged.emit(level, level + 1, spawn_position)
 
-	# 触发特效（通过 EffectManager）
-	var scene_root = get_tree().current_scene
+	# 触发特效
 	EffectManager.create_explosion(scene_root, spawn_position, fruit_color)
 
 	var points = (level + 1) * 10
@@ -212,7 +236,6 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	new_fruit.global_position = spawn_position
 
 	# 连接合成信号
-	var gm = get_node("/root/GameManager")
 	new_fruit.fruit_merged.connect(gm._on_fruit_merged)
 
 	get_parent().add_child(new_fruit)

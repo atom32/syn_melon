@@ -1,7 +1,8 @@
-[gd_scene format=3 uid="uid://cedynbx43mrlb"]
+[gd_scene load_steps=3 format=3 uid="uid://cedynbx43mrlb"]
 
 [ext_resource type="Script" uid="uid://bt4keo5ieqr5t" path="res://scripts/Main.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://cfbgg7fdoqfb2" path="res://scripts/WarningLine.gd" id="2_warning"]
+[ext_resource type="Script" path="res://scripts/GameOverPanel.gd" id="3_gameover"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_warning"]
 size = Vector2(1100, 30)
@@ -96,3 +97,7 @@ color = Color(0.2, 0.2, 0.3, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BackGround" unique_id=748581474]
 shape = SubResource("RectangleShape2D_ground")
+
+[node name="GameOverPanel" type="Panel" parent="."]
+z_index = 99999
+script = ExtResource("3_gameover")
