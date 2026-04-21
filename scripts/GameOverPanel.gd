@@ -27,7 +27,7 @@ func _setup_ui() -> void:
 	vbox.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	vbox.position = Vector2(-150, -100)
 	vbox.size = Vector2(300, 200)
-	vbox.theme_override_constants/separation = 30
+	vbox.add_theme_constant_override("separation", 30)
 	add_child(vbox)
 
 	# 创建标题
@@ -35,7 +35,7 @@ func _setup_ui() -> void:
 	title_label.name = "TitleLabel"
 	title_label.text = "游戏结束"
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_label.theme_override_font_sizes/font_size = 48
+	title_label.add_theme_font_size_override("font_size", 48)
 	title_label.size = Vector2(300, 60)
 	vbox.add_child(title_label)
 
@@ -44,7 +44,7 @@ func _setup_ui() -> void:
 	score_label.name = "ScoreLabel"
 	score_label.text = "最终得分: 0"
 	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	score_label.theme_override_font_sizes/font_size = 32
+	score_label.add_theme_font_size_override("font_size", 32)
 	score_label.size = Vector2(300, 50)
 	vbox.add_child(score_label)
 
@@ -52,7 +52,7 @@ func _setup_ui() -> void:
 	restart_button = Button.new()
 	restart_button.name = "RestartButton"
 	restart_button.text = "重新开始 (Restart)"
-	restart_button.theme_override_font_sizes/font_size = 24
+	restart_button.add_theme_font_size_override("font_size", 24)
 	restart_button.size = Vector2(300, 60)
 	restart_button.pressed.connect(_on_restart_pressed)
 	vbox.add_child(restart_button)
