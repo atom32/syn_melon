@@ -416,20 +416,18 @@ func _cleanup_merge(merge_key: String) -> void:
 ## 创建爆炸粒子特效
 func _create_explosion_effect(position: Vector2) -> void:
 	var explosion = _explosion_scene.instantiate()
-	explosion.global_position = position
 
 	# 设置粒子颜色为当前水果的颜色
 	var config = FRUIT_CONFIG[level]
 	var color = config["color"]
 
-	# 设置粒子颜色
-	if explosion.has_method("set_particle_color"):
-		explosion.set_particle_color(color)
+	# 设置极高的 z_index 确保显示在最上层
+	explosion.z_index = 10000
 
-	get_parent().add_child(explosion)
+	get_tree().current_scene.add_child(explosion)
 	explosion.explode(color, position)
 
-	print("创建爆炸特效，颜色:", color)
+	print("创建爆炸特效，颜色:", color, "位置:", position)
 
 
 ## 创建飘字得分特效
@@ -439,8 +437,12 @@ func _create_floating_score(points: int, position: Vector2) -> void:
 		return
 
 	var floating_score = _floating_score_scene.instantiate()
+
+	# 设置极高的 z_index 确保显示在最上层
+	floating_score.z_index = 10001
+
 	floating_score.show_score(points, position)
 
-	get_parent().add_child(floating_score)
+	get_tree().current_scene.add_child(floating_score)
 
 	print("飘字特效已创建：+%d 分，位置：" % points, position)

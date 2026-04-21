@@ -3,14 +3,14 @@ extends Node2D
 ## 简单爆炸特效 - 合成反馈
 
 # 爆炸粒子数量
-const PARTICLE_COUNT: int = 16
+const PARTICLE_COUNT: int = 24
 
 # 爆炸速度
-const SPEED_MIN: float = 50.0
-const SPEED_MAX: float = 150.0
+const SPEED_MIN: float = 100.0
+const SPEED_MAX: float = 200.0
 
 # 存活时间
-const LIFETIME: float = 0.6
+const LIFETIME: float = 1.0
 
 
 func _ready() -> void:
@@ -38,8 +38,11 @@ func explode(color: Color, position: Vector2) -> void:
 ## 创建单个粒子
 func _create_particle(color: Color, index: int) -> void:
 	var sprite = ColorRect.new()
-	sprite.size = Vector2(8, 8)
+	sprite.size = Vector2(12, 12)  # 增大粒子
 	sprite.color = color
+
+	# 设置极高的 z_index 确保粒子显示在最上层
+	sprite.z_index = 10000
 
 	# 计算随机方向和速度
 	var angle = randf() * TAU  # 0 到 360 度

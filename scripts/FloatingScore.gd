@@ -3,15 +3,15 @@ extends Label
 ## 浮动得分飘字特效
 
 # 飘动距离
-const FLOAT_DISTANCE: float = 50.0
+const FLOAT_DISTANCE: float = 80.0
 
 # 飘动时间
-const FLOAT_DURATION: float = 0.8
+const FLOAT_DURATION: float = 1.5
 
 
 func _ready() -> void:
-	# 设置字体大小
-	add_theme_font_size_override("font_size", 24)
+	# 设置字体大小（增大）
+	add_theme_font_size_override("font_size", 36)
 
 	# 可选：添加文字阴影效果
 	add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.5))
