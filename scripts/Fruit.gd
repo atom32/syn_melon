@@ -517,18 +517,28 @@ func _get_score_color(points: int) -> Color:
 
 ## 飘字动画
 func _animate_floating_score(label: Label, start_position: Vector2) -> void:
+	# 确保初始状态完全可见
+	label.modulate = Color(1, 1, 1, 1)
+	label.scale = Vector2(1.5, 1.5)
+
+	print("开始飘字动画 - 初始位置:", label.global_position, "初始透明度:", label.modulate.a)
+
 	var tween = label.create_tween()
 	tween.set_parallel()
 
-	# 向上移动
-	tween.tween_property(label, "global_position:y", start_position.y - 100, 1.5)
+	# 向上移动（从开始位置向上移动 150 像素）
+	var end_y = start_position.y - 150
+	tween.tween_property(label, "global_position:y", end_y, 2.0)
 
-	# 透明度渐变
-	tween.tween_property(label, "modulate:a", 0.0, 1.5)
+	# 延迟后才开始淡出（前 1 秒保持完全不透明）
+	var fade_tween = label.create_tween()
+	fade_tween.tween_interval(1.0)  # 等待 1 秒
+	fade_tween.tween_property(label, "modulate:a", 0.0, 1.0)  # 然后淡出
 
-	# 放大效果
-	tween.tween_property(label, "scale", Vector2(1.3, 1.3), 0.3)
-	tween.tween_property(label, "scale", Vector2(1.0, 1.0), 1.2)
+	# 缩放动画：先缩小再放大
+	var scale_tween = label.create_tween()
+	scale_tween.tween_property(label, "scale", Vector2(1.8, 1.8), 0.2)
+	scale_tween.tween_property(label, "scale", Vector2(1.0, 1.0), 1.8)
 
 	# 完成后销毁
 	tween.tween_callback(label.queue_free)
