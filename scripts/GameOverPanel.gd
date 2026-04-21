@@ -44,6 +44,8 @@ func _setup_ui() -> void:
 	vbox.add_theme_constant_override("separation", 30)
 	add_child(vbox)
 
+	print("GameOverPanel: VBoxContainer 创建完成，连接按钮信号...")
+
 	# 创建标题
 	title_label = Label.new()
 	title_label.name = "TitleLabel"
@@ -68,10 +70,14 @@ func _setup_ui() -> void:
 	restart_button.text = "重新开始 (Restart)"
 	restart_button.add_theme_font_size_override("font_size", 24)
 	restart_button.size = Vector2(300, 60)
-	restart_button.pressed.connect(_on_restart_pressed)
+
+	# 连接信号并检查是否成功
+	var connected = restart_button.pressed.connect(_on_restart_pressed)
+	print("GameOverPanel: 按钮信号连接状态:", connected)
+
 	vbox.add_child(restart_button)
 
-	print("GameOverPanel UI 创建完成")
+	print("GameOverPanel UI 创建完成，按钮节点:", restart_button)
 
 
 func show_game_over(final_score: int) -> void:
@@ -82,8 +88,17 @@ func show_game_over(final_score: int) -> void:
 
 	if restart_button:
 		restart_button.grab_focus()
+		print("GameOverPanel: 按钮已获得焦点，可按 Enter 或点击")
 
 	print("游戏结束！显示结算面板，得分:", final_score)
+
+
+func _input(event: InputEvent) -> void:
+	# 调试：按 R 键也可以重新开始
+	if visible and event is InputEventKey and event.pressed:
+		if event.keycode == KEY_R:
+			print("GameOverPanel: 检测到 R 键，触发重新开始")
+			_on_restart_pressed()
 
 
 func hide_panel() -> void:
