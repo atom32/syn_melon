@@ -68,9 +68,16 @@ func spawn_fruit(spawn_position: Vector2):
 
 ## 处理合成事件
 func _on_fruit_merged(old_level: int, new_level: int, position: Vector2) -> void:
-	# 计算得分（等级越高，分数越多）
-	var points: int = (old_level + 1) * 10
-	score += points
+	# 获取连击乘数
+	var combo_mgr = get_node("/root/ComboManager")
+	var multiplier: float = combo_mgr.trigger_merge(position)
+
+	# 计算基础得分（等级越高，分数越多）
+	var base_points: int = (old_level + 1) * 10
+
+	# 应用连击乘数
+	var final_points: int = int(base_points * multiplier)
+	score += final_points
 
 	# 发射分数变化信号
 	score_changed.emit(score)
@@ -78,7 +85,11 @@ func _on_fruit_merged(old_level: int, new_level: int, position: Vector2) -> void
 	# 发射合成信号
 	fruit_merged.emit(old_level, new_level, position)
 
-	print("合成！等级 %d → %d，得分：%d，总分：%d" % [old_level, new_level, points, score])
+	# 打印合成信息
+	if multiplier > 1.0:
+		print("合成！等级 %d → %d，基础分：%d，连击乘数：%.1f，最终得分：%d，总分：%d" % [old_level, new_level, base_points, multiplier, final_points, score])
+	else:
+		print("合成！等级 %d → %d，得分：%d，总分：%d" % [old_level, new_level, final_points, score])
 
 
 ## 获取当前分数
@@ -93,6 +104,10 @@ func reset_game() -> void:
 	current_fruit_level = next_fruit_level
 	_randomize_next_fruit()
 	score_changed.emit(0)
+
+	# 重置连击系统
+	var combo_mgr = get_node("/root/ComboManager")
+	combo_mgr.reset()
 
 
 ## 处理大西瓜合成（特殊奖励）

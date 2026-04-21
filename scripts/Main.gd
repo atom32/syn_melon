@@ -23,6 +23,7 @@ const COOLDOWN_TIME: float = 0.5
 @onready var cooldown_timer: Timer = $CooldownTimer
 @onready var game_over_panel: Panel = $GameOverPanel
 @onready var debug_fail_button: Button = $UIBackground/DebugFailButton
+@onready var combo_display: Control = $ComboDisplay
 
 # 当前预览水果（跟随鼠标）
 var _preview_fruit: Fruit = null
@@ -48,6 +49,9 @@ func _ready() -> void:
 
 	# 延迟连接 GameManager 信号（避免 autoload 初始化问题）
 	call_deferred("_connect_game_manager_signals")
+
+	# 延迟连接 ComboManager 信号
+	call_deferred("_connect_combo_manager_signals")
 
 	# 连接调试按钮
 	debug_fail_button.pressed.connect(_on_debug_fail_button)
@@ -117,6 +121,17 @@ func _connect_game_manager_signals() -> void:
 	gm.fruit_merged.connect(_on_fruit_merged)
 	gm.score_changed.connect(_on_score_changed)
 	gm.game_over.connect(_on_game_over)
+
+
+## 连接 ComboManager 信号
+func _connect_combo_manager_signals() -> void:
+	# 检查 ComboManager 是否存在
+	if not has_node("/root/ComboManager"):
+		push_error("ComboManager autoload not found!")
+		return
+
+	var combo_mgr = get_node("/root/ComboManager")
+	combo_mgr.combo_activated.connect(_on_combo_activated)
 
 
 func _input(event: InputEvent) -> void:
@@ -195,6 +210,14 @@ func _on_fruit_spawned(fruit: Fruit, level: int) -> void:
 func _on_fruit_merged(old_level: int, new_level: int, position: Vector2) -> void:
 	# 可以在这里添加特效、音效等
 	pass
+
+
+## 连击激活回调
+func _on_combo_activated(count: int, multiplier: float, position: Vector2) -> void:
+	if combo_display and is_instance_valid(combo_display):
+		combo_display.call("show_combo", count, multiplier)
+
+	print("Main.gd: 连击激活 - %d连击，乘数 %.1f" % [count, multiplier])
 
 
 ## 分数变化回调

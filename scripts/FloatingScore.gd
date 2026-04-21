@@ -25,7 +25,7 @@ func _ready() -> void:
 
 
 ## 设置分数并开始动画
-func show_score(points: int, start_position: Vector2) -> void:
+func show_score(points: int, start_position: Vector2, multiplier: float = 1.0) -> void:
 	# 设置初始位置
 	global_position = start_position
 
@@ -36,15 +36,18 @@ func show_score(points: int, start_position: Vector2) -> void:
 	visible = true
 	modulate = Color(1, 1, 1, 1)
 
-	# 设置分数文本
-	text = "+%d" % points
+	# 设置分数文本（如果有连击乘数，显示乘数）
+	if multiplier > 1.0:
+		text = "+%d (x%.1f)" % [points, multiplier]
+	else:
+		text = "+%d" % points
 
 	# 添加描边效果以提高可见度
 	add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
 	add_theme_constant_override("outline_size", 2)
 
-	# 根据分数大小设置颜色
-	var color = get_score_color(points)
+	# 根据分数和乘数设置颜色
+	var color = get_score_color(points, multiplier)
 	modulate = color
 
 	# 开始动画
@@ -57,8 +60,9 @@ func show_score(points: int, start_position: Vector2) -> void:
 	# 透明度渐变
 	tween.tween_property(self, "modulate:a", 0.0, FLOAT_DURATION)
 
-	# 稍微放大
-	tween.tween_property(self, "scale", Vector2(1.2, 1.2), FLOAT_DURATION * 0.5)
+	# 稍微放大（如果有连击，放大更多）
+	var scale_multiplier = 1.3 if multiplier > 1.0 else 1.2
+	tween.tween_property(self, "scale", Vector2(scale_multiplier, scale_multiplier), FLOAT_DURATION * 0.5)
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), FLOAT_DURATION * 0.5)
 
 	# 完成后自动销毁
@@ -72,8 +76,15 @@ func _on_animation_complete() -> void:
 	queue_free()
 
 
-## 根据分数获取颜色
-func get_score_color(points: int) -> Color:
+## 根据分数和乘数获取颜色
+func get_score_color(points: int, multiplier: float = 1.0) -> Color:
+	# 如果有连击乘数，使用特殊的连击颜色
+	if multiplier > 1.0:
+		if multiplier >= 2.0:
+			return Color(1.0, 0.4, 0.0, 1)  # 橙红色（高连击）
+		else:
+			return Color(1.0, 0.7, 0.0, 1)  # 金黄色（普通连击）
+
 	# 低分：白色
 	if points <= 20:
 		return Color(1, 1, 1, 1)

@@ -54,7 +54,7 @@ static func _create_particle(container: Node2D, color: Color, index: int) -> voi
 
 
 ## 创建飘字得分特效
-static func create_floating_score(parent: Node, position: Vector2, points: int) -> void:
+static func create_floating_score(parent: Node, position: Vector2, points: int, multiplier: float = 1.0) -> void:
 	var container = Control.new()
 	container.z_index = 1000
 	container.global_position = position
@@ -62,7 +62,13 @@ static func create_floating_score(parent: Node, position: Vector2, points: int) 
 	parent.add_child(container)
 
 	var floating_score = RichTextLabel.new()
-	floating_score.text = "[center][color=white]+%d[/color][/center]" % points
+
+	# 如果有连击乘数，显示乘数
+	if multiplier > 1.0:
+		floating_score.text = "[center][color=white]+%d (x%.1f)[/color][/center]" % [points, multiplier]
+	else:
+		floating_score.text = "[center][color=white]+%d[/color][/center]" % points
+
 	floating_score.fit_content = true
 	floating_score.size = Vector2(300, 100)
 	floating_score.bbcode_enabled = true
@@ -72,19 +78,28 @@ static func create_floating_score(parent: Node, position: Vector2, points: int) 
 	floating_score.add_theme_constant_override("outline_size", 6)
 	floating_score.add_theme_font_size_override("normal_font_size", 60)
 
-	floating_score.modulate = Color(1, 1, 1, 1)
+	# 根据乘数设置颜色
+	if multiplier > 1.0:
+		if multiplier >= 2.0:
+			floating_score.modulate = Color(1.0, 0.4, 0.0, 1)  # 橙红色（高连击）
+		else:
+			floating_score.modulate = Color(1.0, 0.7, 0.0, 1)  # 金黄色（普通连击）
+	else:
+		floating_score.modulate = Color(1, 1, 1, 1)
+
 	floating_score.visible = true
 
 	container.add_child(floating_score)
 
-	# 开始动画
-	_animate_floating_score(container, position)
+	# 开始动画（如果有连击，放大更多）
+	var start_scale = 1.8 if multiplier > 1.0 else 1.5
+	_animate_floating_score(container, position, start_scale)
 
 
 ## 飘字动画
-static func _animate_floating_score(container: Control, start_position: Vector2) -> void:
+static func _animate_floating_score(container: Control, start_position: Vector2, start_scale: float = 1.5) -> void:
 	container.modulate = Color(1, 1, 1, 1)
-	container.scale = Vector2(1.5, 1.5)
+	container.scale = Vector2(start_scale, start_scale)
 
 	var tween = container.create_tween()
 	tween.set_parallel()
@@ -100,7 +115,7 @@ static func _animate_floating_score(container: Control, start_position: Vector2)
 
 	# 缩放动画
 	var scale_tween = container.create_tween()
-	scale_tween.tween_property(container, "scale", Vector2(1.8, 1.8), 0.2)
+	scale_tween.tween_property(container, "scale", Vector2(start_scale + 0.3, start_scale + 0.3), 0.2)
 	scale_tween.tween_property(container, "scale", Vector2(1.0, 1.0), 1.8)
 
 	# 完成后销毁

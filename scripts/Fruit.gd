@@ -201,6 +201,11 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	var scene_root = get_tree().current_scene
 	var gm = get_node("/root/GameManager")
 	var audio = get_node("/root/AudioManager")
+	var combo_mgr = get_node("/root/ComboManager")
+
+	# 获取连击乘数
+	var combo_info = combo_mgr.get_combo_info()
+	var multiplier: float = combo_info.multiplier
 
 	# 检查是否是最高等级合成（大西瓜）
 	if level >= FruitConfig.get_max_level():
@@ -210,8 +215,9 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 		# 触发超大爆炸特效
 		EffectManager.create_mega_explosion(scene_root, spawn_position, fruit_color)
 
-		# 显示超大得分飘字
-		EffectManager.create_floating_score(scene_root, spawn_position, 1000)
+		# 显示超大得分飘字（带乘数）
+		var mega_points = 1000
+		EffectManager.create_floating_score(scene_root, spawn_position, mega_points, multiplier)
 
 		# 奖励高分
 		gm.on_mega_fruit_merged(spawn_position)
@@ -235,7 +241,7 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	EffectManager.create_explosion(scene_root, spawn_position, fruit_color)
 
 	var points = (level + 1) * 10
-	EffectManager.create_floating_score(scene_root, spawn_position, points)
+	EffectManager.create_floating_score(scene_root, spawn_position, points, multiplier)
 
 	# 播放合成音效
 	audio.play_merge(level)
