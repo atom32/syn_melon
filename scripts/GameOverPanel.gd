@@ -5,11 +5,15 @@ extends Panel
 
 signal restart_requested
 
-@onready var score_label: Label = $VBoxContainer/ScoreLabel
-@onready var restart_button: Button = $VBoxContainer/RestartButton
+var score_label: Label = null
+var restart_button: Button = null
 
 
 func _ready() -> void:
+	# 获取节点引用
+	score_label = $VBoxContainer/ScoreLabel
+	restart_button = $VBoxContainer/RestartButton
+
 	# 居中显示
 	set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	size = Vector2(400, 300)
@@ -18,7 +22,8 @@ func _ready() -> void:
 	add_theme_stylebox_override("panel", get_panel_style())
 
 	# 连接按钮信号
-	restart_button.pressed.connect(_on_restart_pressed)
+	if restart_button:
+		restart_button.pressed.connect(_on_restart_pressed)
 
 	# 初始隐藏
 	visible = false
