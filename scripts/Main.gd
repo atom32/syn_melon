@@ -202,6 +202,10 @@ func _on_score_changed(new_score: int) -> void:
 func _on_game_over() -> void:
 	print("Main.gd: 游戏结束信号已接收")
 
+	# 播放游戏结束音效
+	var audio = get_node("/root/AudioManager")
+	audio.play_game_over()
+
 	# 暂停游戏
 	get_tree().paused = true
 

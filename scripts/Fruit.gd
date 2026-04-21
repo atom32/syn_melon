@@ -72,6 +72,9 @@ func _ready() -> void:
 	var random_angular_velocity = randf_range(-5.0, 5.0)
 	angular_velocity = deg_to_rad(random_angular_velocity)
 
+	# 连接碰撞音效信号（落地时播放）
+	body_entered.connect(_on_collision_sound)
+
 
 func _physics_process(delta: float) -> void:
 	if _spawn_cooldown > 0:
@@ -197,6 +200,7 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	var fruit_color: Color = FruitConfig.get_color(level)
 	var scene_root = get_tree().current_scene
 	var gm = get_node("/root/GameManager")
+	var audio = get_node("/root/AudioManager")
 
 	# 检查是否是最高等级合成（大西瓜）
 	if level >= FruitConfig.get_max_level():
@@ -211,6 +215,9 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 
 		# 奖励高分
 		gm.on_mega_fruit_merged(spawn_position)
+
+		# 播放超大合成音效
+		audio.play_mega_merge()
 
 		# 删除旧水果（不生成新水果）
 		call_deferred("queue_free")
@@ -230,6 +237,9 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	var points = (level + 1) * 10
 	EffectManager.create_floating_score(scene_root, spawn_position, points)
 
+	# 播放合成音效
+	audio.play_merge(level)
+
 	# 创建新的水果
 	var new_fruit: Fruit = _fruit_scene.instantiate()
 	new_fruit.level = level + 1
@@ -244,6 +254,14 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	call_deferred("queue_free")
 	other_fruit.call_deferred("queue_free")
 	call_deferred("_cleanup_merge", merge_key)
+
+
+## 播放碰撞音效（仅首次碰撞，避免重复）
+func _on_collision_sound(body: Node) -> void:
+	# 只在冷却结束后才播放碰撞音效（避免合成时也播放）
+	if _spawn_cooldown <= 0:
+		var audio = get_node("/root/AudioManager")
+		audio.play_collision(level)
 
 
 ## 清理合成标记

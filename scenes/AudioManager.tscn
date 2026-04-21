@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://audio_manager"]
+
+[ext_resource type="Script" path="res://autoload/AudioManager.gd" id="1_audio"]
+
+[node name="AudioManager" type="Node"]
+script = ExtResource("1_audio")
+
+[node name="CollisionPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="MergePlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="GameOverPlayer" type="AudioStreamPlayer" parent="."]
