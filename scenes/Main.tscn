@@ -25,7 +25,7 @@ one_shot = true
 [node name="UIBackground" type="ColorRect" parent="." unique_id=2066795314]
 offset_left = 627.0
 offset_right = 1149.0
-offset_bottom = 443.0
+offset_bottom = 725.0
 color = Color(0.1, 0.1, 0.15, 1)
 
 [node name="NextLabel" type="Label" parent="UIBackground" unique_id=1932855357]
