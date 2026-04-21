@@ -13,6 +13,13 @@ func _ready() -> void:
 	# 等待场景完全准备好
 	await ready
 
+	# 设置面板自身居中
+	set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	size = Vector2(400, 300)
+
+	# 设置面板样式
+	add_theme_stylebox_override("panel", get_panel_style())
+
 	# 动态创建 UI 元素
 	_setup_ui()
 
@@ -21,12 +28,22 @@ func _ready() -> void:
 
 
 func _setup_ui() -> void:
-	# 创建 VBoxContainer
+	# 创建 VBoxContainer（使用相对布局）
 	var vbox = VBoxContainer.new()
 	vbox.name = "VBoxContainer"
+
+	# 设置 anchors 为全填充，然后通过 offsets 居中
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vbox.offset_left = 50
+	vbox.offset_top = 50
+	vbox.offset_right = -50
+	vbox.offset_bottom = -50
+
+	# 或者直接设置大小和居中
 	vbox.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	vbox.position = Vector2(-150, -100)
 	vbox.size = Vector2(300, 200)
+
 	vbox.add_theme_constant_override("separation", 30)
 	add_child(vbox)
 
