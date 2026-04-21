@@ -113,6 +113,15 @@ func _ready() -> void:
 	collision_layer = 1      # 水果在第 1 层
 	collision_mask = 1       # 水果与第 1 层碰撞（其他水果和地面）
 
+	# 创建统一的物理材质
+	var physics_material = PhysicsMaterial.new()
+	physics_material.friction = 0.3      # 较低的摩擦力，让水果容易滑动
+	physics_material.bounce = 0.15       # 轻微弹性，有微弹效果但不会弹太高
+	physics_material.rough = false       # 光滑表面
+
+	# 应用物理材质
+	physics_material_override = physics_material
+
 	# 设置探测器区域（用于警戒线检测）
 	if has_node("DetectorArea"):
 		var detector = $DetectorArea
@@ -135,6 +144,13 @@ func _ready() -> void:
 
 	# 设置初始冷却时间
 	_spawn_cooldown = SPAWN_COOLDOWN_TIME
+
+	# 添加微小的随机初始角速度，让水果掉落时更生动
+	# 范围：-5 到 +5 度每秒
+	var random_angular_velocity = randf_range(-5.0, 5.0)
+	angular_velocity = deg_to_rad(random_angular_velocity)
+
+	print("水果等级 %d 初始化角速度: %.2f 度/秒" % [level, random_angular_velocity])
 
 
 func _physics_process(delta: float) -> void:
