@@ -473,37 +473,34 @@ func _create_floating_score(points: int, position: Vector2) -> void:
 	# 直接创建 Label 节点
 	var floating_score = Label.new()
 
-	# 设置基本属性
+	# 设置基本属性 - 使用 global_position 确保位置正确
 	floating_score.text = "+%d" % points
 	floating_score.z_index = 10001
-	floating_score.position = position
+	floating_score.global_position = position
 
 	# 设置大小和对齐
-	floating_score.size = Vector2(200, 50)
+	floating_score.size = Vector2(200, 60)
 	floating_score.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	floating_score.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 	# 设置字体大小（使用主题覆盖）
 	floating_score.add_theme_font_size_override("font_size", 48)
 
-	# 设置颜色
-	var color = _get_score_color(points)
-	floating_score.modulate = color
+	# 设置颜色（使用白色确保最显眼）
+	floating_score.modulate = Color(1, 1, 1, 1)
 
-	# 添加描边效果
+	# 添加描边效果（黑色粗描边）
 	floating_score.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-	floating_score.add_theme_constant_override("outline_size", 4)
-
-	# 设置自动居中（锚点在中心）
-	floating_score.pivot_offset = Vector2(100, 25)
+	floating_score.add_theme_constant_override("outline_size", 5)
 
 	# 添加到场景
 	get_tree().current_scene.add_child(floating_score)
 
+	# 验证节点状态
+	print("飘字创建完成 - visible:", floating_score.visible, "position:", floating_score.global_position, "text:", floating_score.text, "size:", floating_score.size)
+
 	# 开始动画
 	_animate_floating_score(floating_score, position)
-
-	print("飘字特效直接创建：+%d 分，位置：%s, 颜色：%s" % [points, position, color])
 
 
 ## 根据分数获取颜色
