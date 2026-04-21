@@ -18,6 +18,7 @@ const COOLDOWN_TIME: float = 0.5
 # UI 引用
 @onready var ui_label_next: Label = $UIBackground/NextLabel
 @onready var ui_label_score: Label = $UIBackground/ScoreLabel
+@onready var ui_label_high_score: Label = $UIBackground/HighScoreLabel
 @onready var ui_preview_container: Control = $UIBackground/PreviewContainer
 @onready var cooldown_timer: Timer = $CooldownTimer
 @onready var game_over_panel: Panel = $GameOverPanel
@@ -50,6 +51,9 @@ func _ready() -> void:
 
 	# 连接调试按钮
 	debug_fail_button.pressed.connect(_on_debug_fail_button)
+
+	# 加载并显示最高分
+	_load_high_score()
 
 	# 更新初始 UI
 	_update_ui()
@@ -206,12 +210,20 @@ func _on_game_over() -> void:
 	var audio = get_node("/root/AudioManager")
 	audio.play_game_over()
 
+	# 检查并更新最高分
+	var gm = get_node("/root/GameManager")
+	var save_mgr = get_node("/root/SaveManager")
+	var final_score = gm.get_score()
+
+	var is_new_record = save_mgr.check_and_update_high_score(final_score)
+	if is_new_record:
+		print("Main.gd: 新纪录！")
+		_update_high_score_display()
+
 	# 暂停游戏
 	get_tree().paused = true
 
 	# 显示游戏结束面板
-	var gm = get_node("/root/GameManager")
-	var final_score = gm.get_score()
 	game_over_panel.call("show_game_over", final_score)
 
 
@@ -245,3 +257,17 @@ func _update_ui() -> void:
 	_ui_preview_fruit.position = Vector2(container_size.x / 2, container_size.y / 2)
 
 	ui_preview_container.add_child(_ui_preview_fruit)
+
+
+## 加载最高分
+func _load_high_score() -> void:
+	var save_mgr = get_node("/root/SaveManager")
+	var high_score = save_mgr.get_high_score()
+	_update_high_score_display()
+
+
+## 更新最高分显示
+func _update_high_score_display() -> void:
+	var save_mgr = get_node("/root/SaveManager")
+	var high_score = save_mgr.get_high_score()
+	ui_label_high_score.text = "Best: %d" % high_score

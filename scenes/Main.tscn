@@ -47,6 +47,15 @@ offset_bottom = 90.0
 theme_override_font_sizes/font_size = 20
 text = "分数: 0"
 
+[node name="HighScoreLabel" type="Label" parent="UIBackground"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 95.0
+offset_right = 300.0
+offset_bottom = 120.0
+theme_override_font_sizes/font_size = 16
+text = "Best: 0"
+
 [node name="PreviewContainer" type="Control" parent="UIBackground" unique_id=1822015116]
 anchors_preset = 0
 offset_left = 201.0
