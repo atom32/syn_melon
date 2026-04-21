@@ -1,4 +1,3 @@
-class_name GameOverPanel
 extends Panel
 
 ## 游戏结束结算面板
