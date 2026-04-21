@@ -1,20 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://cedynbx43mrlb"]
+[gd_scene format=3 uid="uid://cedynbx43mrlb"]
 
 [ext_resource type="Script" uid="uid://bt4keo5ieqr5t" path="res://scripts/Main.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://cfbgg7fdoqfb2" path="res://scripts/WarningLine.gd" id="2_warning"]
-[ext_resource type="Script" path="res://scripts/GameOverPanel.gd" id="3_gameover"]
+[ext_resource type="Script" uid="uid://cyql8n62fkvnm" path="res://scripts/GameOverPanel.gd" id="3_gameover"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_warning"]
-size = Vector2(1100, 30)
+size = Vector2(664, 30)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ceiling"]
-size = Vector2(1200, 50)
+size = Vector2(721, 96)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
-size = Vector2(50, 1200)
+size = Vector2(50, 767.75)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
-size = Vector2(1200, 50)
+size = Vector2(723, 116)
 
 [node name="Main" type="Node2D" unique_id=1376790439]
 script = ExtResource("1_main")
@@ -54,12 +54,12 @@ offset_top = -26.0
 offset_right = 461.0
 offset_bottom = 244.0
 
-[node name="DebugFailButton" type="Button" parent="UIBackground"]
+[node name="DebugFailButton" type="Button" parent="UIBackground" unique_id=1958018258]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 100.0
-offset_right = 150.0
-offset_bottom = 130.0
+offset_left = 10.0
+offset_top = 124.0
+offset_right = 140.0
+offset_bottom = 154.0
 theme_override_font_sizes/font_size = 14
 text = "快速失败 (测试)"
 
@@ -68,6 +68,7 @@ position = Vector2(575, 200)
 script = ExtResource("2_warning")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WarningLine" unique_id=1575481702]
+position = Vector2(-218, 0)
 shape = SubResource("RectangleShape2D_warning")
 
 [node name="Ceiling" type="StaticBody2D" parent="." unique_id=1487805239]
@@ -75,6 +76,7 @@ position = Vector2(575, 75)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling" unique_id=1303117551]
+position = Vector2(-239.5, -23)
 shape = SubResource("RectangleShape2D_ceiling")
 
 [node name="LeftWall" type="StaticBody2D" parent="." unique_id=600135904]
@@ -82,7 +84,7 @@ position = Vector2(0, 450)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=1650827705]
-position = Vector2(48, 4)
+position = Vector2(48, 20)
 shape = SubResource("RectangleShape2D_wall")
 
 [node name="RightWall" type="StaticBody2D" parent="." unique_id=1829616924]
@@ -90,7 +92,7 @@ position = Vector2(1150, 450)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=1092074336]
-position = Vector2(-499, -12)
+position = Vector2(-499, 15.125)
 shape = SubResource("RectangleShape2D_wall")
 
 [node name="BackGround" type="StaticBody2D" parent="." unique_id=198111269]
@@ -105,8 +107,20 @@ offset_bottom = -24.0
 color = Color(0.2, 0.2, 0.3, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BackGround" unique_id=748581474]
+position = Vector2(-238.5, 33)
 shape = SubResource("RectangleShape2D_ground")
 
-[node name="GameOverPanel" type="Panel" parent="."]
+[node name="GameOverPanel" type="Panel" parent="." unique_id=1367045092]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
 z_index = 4000
 script = ExtResource("3_gameover")
