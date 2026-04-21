@@ -10,13 +10,18 @@ const FLOAT_DURATION: float = 1.5
 
 
 func _ready() -> void:
-	# 设置字体大小（增大）
+	# 使用主题的默认字体
+	var theme = Theme.new()
+	var default_font = get_theme_default_font()
+
+	# 设置字体大小
 	add_theme_font_size_override("font_size", 36)
 
-	# 可选：添加文字阴影效果
-	add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.5))
-	add_theme_constant_override("shadow_offset_x", 1)
-	add_theme_constant_override("shadow_offset_y", 1)
+	# 添加文字描边效果以确保可见
+	add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	add_theme_constant_override("outline_size", 3)
+
+	print("飘字节点初始化完成，默认字体:", default_font != null)
 
 
 ## 设置分数并开始动画
@@ -27,8 +32,16 @@ func show_score(points: int, start_position: Vector2) -> void:
 	# 确保 z_index 足够高，显示在所有水果前面
 	z_index = 1000
 
+	# 确保可见
+	visible = true
+	modulate = Color(1, 1, 1, 1)
+
 	# 设置分数文本
 	text = "+%d" % points
+
+	# 添加描边效果以提高可见度
+	add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	add_theme_constant_override("outline_size", 2)
 
 	# 根据分数大小设置颜色
 	var color = get_score_color(points)
@@ -51,7 +64,7 @@ func show_score(points: int, start_position: Vector2) -> void:
 	# 完成后自动销毁
 	tween.tween_callback(_on_animation_complete)
 
-	print("飘字特效：+%d 在位置" % [points, start_position])
+	print("飘字特效：+%d 在位置 %s, visible: %s, modulate: %s" % [points, start_position, visible, modulate])
 
 
 ## 动画完成回调

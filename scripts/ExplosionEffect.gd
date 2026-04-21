@@ -24,6 +24,11 @@ func explode(color: Color, position: Vector2) -> void:
 	# 确保 z_index 足够高，显示在所有水果前面
 	z_index = 999
 
+	# 确保可见
+	visible = true
+
+	print("爆炸特效开始，位置:", position, "子节点数:", get_child_count())
+
 	# 创建爆炸粒子
 	for i in range(PARTICLE_COUNT):
 		_create_particle(color, i)
@@ -72,6 +77,8 @@ func _create_particle(color: Color, index: int) -> void:
 
 	# 完成后清理
 	tween.tween_callback(_on_particle_finished.bind(particle_node))
+
+	print("粒子 %d 创建完成，位置: %s, 颜色: %s" % [index, sprite.global_position, color])
 
 
 ## 粒子动画完成
