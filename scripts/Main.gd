@@ -21,6 +21,7 @@ const COOLDOWN_TIME: float = 0.5
 @onready var ui_preview_container: Control = $UIBackground/PreviewContainer
 @onready var cooldown_timer: Timer = $CooldownTimer
 @onready var game_over_panel: Panel = $GameOverPanel
+@onready var debug_fail_button: Button = $UIBackground/DebugFailButton
 
 # 当前预览水果（跟随鼠标）
 var _preview_fruit: Fruit = null
@@ -46,6 +47,9 @@ func _ready() -> void:
 
 	# 延迟连接 GameManager 信号（避免 autoload 初始化问题）
 	call_deferred("_connect_game_manager_signals")
+
+	# 连接调试按钮
+	debug_fail_button.pressed.connect(_on_debug_fail_button)
 
 	# 更新初始 UI
 	_update_ui()
@@ -205,6 +209,14 @@ func _on_game_over() -> void:
 	var gm = get_node("/root/GameManager")
 	var final_score = gm.get_score()
 	game_over_panel.call("show_game_over", final_score)
+
+
+## 调试：快速失败按钮
+func _on_debug_fail_button() -> void:
+	print("Main.gd: 快速失败按钮被点击")
+	var gm = get_node("/root/GameManager")
+	gm.game_over.emit()
+	_on_game_over()
 
 
 ## 更新 UI 显示
