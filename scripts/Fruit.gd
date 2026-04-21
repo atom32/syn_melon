@@ -413,36 +413,125 @@ func _cleanup_merge(merge_key: String) -> void:
 		_processing_merges.erase(merge_key)
 
 
-## 创建爆炸粒子特效
+## 创建爆炸粒子特效（直接创建，不使用场景文件）
 func _create_explosion_effect(position: Vector2) -> void:
-	var explosion = _explosion_scene.instantiate()
-
 	# 设置粒子颜色为当前水果的颜色
 	var config = FRUIT_CONFIG[level]
 	var color = config["color"]
 
-	# 设置极高的 z_index 确保显示在最上层
-	explosion.z_index = 10000
+	# 创建粒子容器
+	var container = Node2D.new()
+	container.z_index = 10000
+	container.global_position = position
+	get_tree().current_scene.add_child(container)
 
-	get_tree().current_scene.add_child(explosion)
-	explosion.explode(color, position)
+	# 创建多个粒子
+	var particle_count = 24
+	for i in range(particle_count):
+		_create_single_particle(container, color, i)
 
-	print("创建爆炸特效，颜色:", color, "位置:", position)
+	# 自动清理
+	var cleanup_timer = get_tree().create_timer(1.2)
+	cleanup_timer.timeout.connect(container.queue_free)
+
+	print("创建爆炸特效，颜色:", color, "位置:", position, "粒子数:", particle_count)
 
 
-## 创建飘字得分特效
+## 创建单个粒子
+func _create_single_particle(container: Node2D, color: Color, index: int) -> void:
+	var particle = ColorRect.new()
+	particle.size = Vector2(16, 16)
+	particle.color = color
+	particle.z_index = 10000
+	particle.position = Vector2(0, 0)
+
+	container.add_child(particle)
+
+	# 随机方向和速度
+	var angle = randf() * TAU
+	var speed = randf_range(150, 300)
+	var velocity = Vector2.from_angle(angle) * speed
+
+	# 动画
+	var tween = particle.create_tween()
+	tween.set_parallel()
+
+	# 移动
+	tween.tween_property(particle, "global_position", particle.global_position + velocity, 1.0)
+
+	# 缩小
+	tween.tween_property(particle, "scale", Vector2.ZERO, 1.0)
+
+	# 透明度
+	tween.tween_property(particle, "modulate:a", 0.0, 1.0)
+
+	print("粒子 %d 创建，位置:%s" % [index, particle.global_position])
+
+
+## 创建飘字得分特效（直接创建，不使用场景文件）
 func _create_floating_score(points: int, position: Vector2) -> void:
-	if not _floating_score_scene:
-		print("错误：FloatingScore 场景未加载")
-		return
+	# 直接创建 Label 节点
+	var floating_score = Label.new()
 
-	var floating_score = _floating_score_scene.instantiate()
-
-	# 设置极高的 z_index 确保显示在最上层
+	# 设置基本属性
+	floating_score.text = "+%d" % points
 	floating_score.z_index = 10001
+	floating_score.position = position
 
-	floating_score.show_score(points, position)
+	# 设置大小和对齐
+	floating_score.size = Vector2(200, 50)
+	floating_score.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	floating_score.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
+	# 设置字体大小（使用主题覆盖）
+	floating_score.add_theme_font_size_override("font_size", 48)
+
+	# 设置颜色
+	var color = _get_score_color(points)
+	floating_score.modulate = color
+
+	# 添加描边效果
+	floating_score.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	floating_score.add_theme_constant_override("outline_size", 4)
+
+	# 设置自动居中（锚点在中心）
+	floating_score.pivot_offset = Vector2(100, 25)
+
+	# 添加到场景
 	get_tree().current_scene.add_child(floating_score)
 
-	print("飘字特效已创建：+%d 分，位置：" % points, position)
+	# 开始动画
+	_animate_floating_score(floating_score, position)
+
+	print("飘字特效直接创建：+%d 分，位置：%s, 颜色：%s" % [points, position, color])
+
+
+## 根据分数获取颜色
+func _get_score_color(points: int) -> Color:
+	if points <= 20:
+		return Color(1, 1, 1, 1)  # 白色
+	elif points <= 60:
+		return Color(1, 1, 0, 1)  # 黄色
+	elif points <= 90:
+		return Color(1, 0.5, 0, 1)  # 橙色
+	else:
+		return Color(1, 0.8, 0, 1)  # 金色
+
+
+## 飘字动画
+func _animate_floating_score(label: Label, start_position: Vector2) -> void:
+	var tween = label.create_tween()
+	tween.set_parallel()
+
+	# 向上移动
+	tween.tween_property(label, "global_position:y", start_position.y - 100, 1.5)
+
+	# 透明度渐变
+	tween.tween_property(label, "modulate:a", 0.0, 1.5)
+
+	# 放大效果
+	tween.tween_property(label, "scale", Vector2(1.3, 1.3), 0.3)
+	tween.tween_property(label, "scale", Vector2(1.0, 1.0), 1.2)
+
+	# 完成后销毁
+	tween.tween_callback(label.queue_free)
