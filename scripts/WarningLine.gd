@@ -198,9 +198,9 @@ func _trigger_game_over(fruit: Fruit) -> void:
 	print("游戏结束！水果等级 %d 在警戒线停留超过 %.1f 秒" % [fruit.level, TIMEOUT_TIME])
 	print("=" .repeat(50))
 
-	# 发射游戏结束信号
-	var gm = get_node("/root/GameManager")
-	gm.game_over.emit()
+	# 发射游戏结束事件到 EventBus
+	var event_bus = get_node("/root/EventBus")
+	event_bus.emit_game_over()
 
 	# 暂停游戏（由 Main.gd 处理面板显示）
 	get_tree().paused = true

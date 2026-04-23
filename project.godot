@@ -21,6 +21,7 @@ GameManager="res://autoload/GameManager.gd"
 AudioManager="res://autoload/AudioManager.gd"
 SaveManager="res://autoload/SaveManager.gd"
 ComboManager="res://autoload/ComboManager.gd"
+EventBus="res://autoload/EventBus.gd"
 
 [display]
 

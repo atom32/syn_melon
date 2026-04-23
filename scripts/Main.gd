@@ -47,11 +47,8 @@ func _ready() -> void:
 	# 动态计算游戏边界
 	_calculate_game_boundaries()
 
-	# 延迟连接 GameManager 信号（避免 autoload 初始化问题）
-	call_deferred("_connect_game_manager_signals")
-
-	# 延迟连接 ComboManager 信号
-	call_deferred("_connect_combo_manager_signals")
+	# 延迟连接 EventBus 信号（避免 autoload 初始化问题）
+	call_deferred("_connect_eventbus_signals")
 
 	# 连接调试按钮
 	debug_fail_button.pressed.connect(_on_debug_fail_button)
@@ -109,29 +106,28 @@ func _on_cooldown_finished() -> void:
 	print("Main.gd: 冷却结束，可以再次发射")
 
 
-## 连接 GameManager 信号
-func _connect_game_manager_signals() -> void:
-	# 检查 GameManager 是否存在
-	if not has_node("/root/GameManager"):
-		push_error("GameManager autoload not found!")
+## 连接 EventBus 信号
+func _connect_eventbus_signals() -> void:
+	# 检查 EventBus 是否存在
+	if not has_node("/root/EventBus"):
+		push_error("EventBus autoload not found!")
 		return
 
-	var gm = get_node("/root/GameManager")
-	gm.fruit_spawned.connect(_on_fruit_spawned)
-	gm.fruit_merged.connect(_on_fruit_merged)
-	gm.score_changed.connect(_on_score_changed)
-	gm.game_over.connect(_on_game_over)
+	var bus = get_node("/root/EventBus")
 
+	# 连接水果相关事件
+	bus.fruit_spawned.connect(_on_fruit_spawned)
+	bus.fruit_merged.connect(_on_fruit_merged)
 
-## 连接 ComboManager 信号
-func _connect_combo_manager_signals() -> void:
-	# 检查 ComboManager 是否存在
-	if not has_node("/root/ComboManager"):
-		push_error("ComboManager autoload not found!")
-		return
+	# 连接分数相关事件
+	bus.score_changed.connect(_on_score_changed)
+	bus.high_score_updated.connect(_on_high_score_updated)
 
-	var combo_mgr = get_node("/root/ComboManager")
-	combo_mgr.combo_activated.connect(_on_combo_activated)
+	# 连接连击相关事件
+	bus.combo_activated.connect(_on_combo_activated)
+
+	# 连接游戏流程事件
+	bus.game_over.connect(_on_game_over)
 
 
 func _input(event: InputEvent) -> void:
@@ -223,6 +219,12 @@ func _on_combo_activated(count: int, multiplier: float, position: Vector2) -> vo
 ## 分数变化回调
 func _on_score_changed(new_score: int) -> void:
 	ui_label_score.text = "分数: %d" % new_score
+
+
+## 最高分更新回调
+func _on_high_score_updated(new_high_score: int) -> void:
+	ui_label_high_score.text = "Best: %d" % new_high_score
+	print("Main.gd: 最高分更新 - %d" % new_high_score)
 
 
 ## 游戏结束回调

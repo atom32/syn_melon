@@ -3,9 +3,6 @@ class_name Fruit
 
 ## 水果脚本 - 核心物理和碰撞逻辑
 
-# 合成信号
-signal fruit_merged(old_level: int, new_level: int, position: Vector2)
-
 # 唯一 ID 计数器（用于防止双重触发）
 static var _next_id: int = 0
 var _fruit_id: int = 0
@@ -199,9 +196,9 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	var spawn_position: Vector2 = (global_position + other_fruit.global_position) / 2.0
 	var fruit_color: Color = FruitConfig.get_color(level)
 	var scene_root = get_tree().current_scene
-	var gm = get_node("/root/GameManager")
 	var audio = get_node("/root/AudioManager")
 	var combo_mgr = get_node("/root/ComboManager")
+	var event_bus = get_node("/root/EventBus")
 
 	# 获取连击乘数
 	var combo_info = combo_mgr.get_combo_info()
@@ -209,8 +206,11 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 
 	# 检查是否是最高等级合成（大西瓜）
 	if level >= FruitConfig.get_max_level():
-		# 发射合成信号
-		fruit_merged.emit(level, level, spawn_position)
+		# 发射合成信号到 EventBus
+		event_bus.emit_fruit_merged(level, level, spawn_position)
+
+		# 发射大西瓜合成特殊事件
+		event_bus.emit_mega_fruit_merged(spawn_position)
 
 		# 触发超大爆炸特效
 		EffectManager.create_mega_explosion(scene_root, spawn_position, fruit_color)
@@ -218,9 +218,6 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 		# 显示超大得分飘字（带乘数）
 		var mega_points = 1000
 		EffectManager.create_floating_score(scene_root, spawn_position, mega_points, multiplier)
-
-		# 奖励高分
-		gm.on_mega_fruit_merged(spawn_position)
 
 		# 播放超大合成音效
 		audio.play_mega_merge()
@@ -234,8 +231,8 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 		return
 
 	# 正常合成流程
-	# 发射合成信号
-	fruit_merged.emit(level, level + 1, spawn_position)
+	# 发射合成信号到 EventBus
+	event_bus.emit_fruit_merged(level, level + 1, spawn_position)
 
 	# 触发特效
 	EffectManager.create_explosion(scene_root, spawn_position, fruit_color)
@@ -250,9 +247,6 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	var new_fruit: Fruit = _fruit_scene.instantiate()
 	new_fruit.level = level + 1
 	new_fruit.global_position = spawn_position
-
-	# 连接合成信号
-	new_fruit.fruit_merged.connect(gm._on_fruit_merged)
 
 	get_parent().add_child(new_fruit)
 

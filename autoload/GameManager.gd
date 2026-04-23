@@ -4,10 +4,7 @@ extends Node
 ## 管理待发射水果、分数、游戏状态
 ## 注意：autoload 注册名称为 "GameManager"，不需要 class_name
 
-# 信号
-signal fruit_spawned(fruit, level: int)
-signal fruit_merged(old_level: int, new_level: int, position: Vector2)
-signal mega_fruit_merged(position: Vector2)  # 大西瓜合成信号
+# 信号（保留用于向后兼容，但通过 EventBus 转发）
 signal score_changed(new_score: int)
 signal game_over()
 
@@ -29,6 +26,11 @@ func _ready() -> void:
 	_randomize_next_fruit()
 	current_fruit_level = next_fruit_level
 	_randomize_next_fruit()
+
+	# 连接 EventBus 事件
+	var event_bus = get_node("/root/EventBus")
+	event_bus.fruit_merged.connect(_on_fruit_merged)
+	event_bus.mega_fruit_merged.connect(_on_mega_fruit_merged)
 
 
 ## 随机生成下一个水果（0-3级）
@@ -53,11 +55,9 @@ func spawn_fruit(spawn_position: Vector2):
 	fruit.level = current_fruit_level
 	fruit.global_position = spawn_position
 
-	# 连接合成信号
-	fruit.fruit_merged.connect(_on_fruit_merged)
-
-	# 发射信号
-	fruit_spawned.emit(fruit, current_fruit_level)
+	# 发射水果生成事件到 EventBus
+	var event_bus = get_node("/root/EventBus")
+	event_bus.emit_fruit_spawned(fruit, current_fruit_level)
 
 	# 更新水果
 	current_fruit_level = next_fruit_level
@@ -79,11 +79,9 @@ func _on_fruit_merged(old_level: int, new_level: int, position: Vector2) -> void
 	var final_points: int = int(base_points * multiplier)
 	score += final_points
 
-	# 发射分数变化信号
-	score_changed.emit(score)
-
-	# 发射合成信号
-	fruit_merged.emit(old_level, new_level, position)
+	# 发射分数变化事件到 EventBus
+	var event_bus = get_node("/root/EventBus")
+	event_bus.emit_score_changed(score)
 
 	# 打印合成信息
 	if multiplier > 1.0:
@@ -103,18 +101,23 @@ func reset_game() -> void:
 	_randomize_next_fruit()
 	current_fruit_level = next_fruit_level
 	_randomize_next_fruit()
-	score_changed.emit(0)
 
 	# 重置连击系统
 	var combo_mgr = get_node("/root/ComboManager")
 	combo_mgr.reset()
 
+	# 发射分数变化事件
+	var event_bus = get_node("/root/EventBus")
+	event_bus.emit_score_changed(0)
+
 
 ## 处理大西瓜合成（特殊奖励）
-func on_mega_fruit_merged(position: Vector2) -> void:
+func _on_mega_fruit_merged(position: Vector2) -> void:
 	var bonus_points: int = 1000
 	score += bonus_points
-	score_changed.emit(score)
-	mega_fruit_merged.emit(position)
+
+	# 发射分数变化事件
+	var event_bus = get_node("/root/EventBus")
+	event_bus.emit_score_changed(score)
 
 	print("🎉 大西瓜合成！奖励 %d 分，总分：%d" % [bonus_points, score])

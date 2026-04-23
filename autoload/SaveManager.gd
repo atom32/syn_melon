@@ -68,6 +68,11 @@ func check_and_update_high_score(current_score: int) -> bool:
 		high_score = current_score
 		save_data()
 		print("SaveManager: 新纪录！%d → %d" % [old_score, high_score])
+
+		# 发射最高分更新事件到 EventBus
+		var event_bus = get_node("/root/EventBus")
+		event_bus.emit_high_score_updated(high_score)
+
 		return true
 	return false
 

@@ -3,10 +3,6 @@ extends Node
 ## 连击管理器 - 单例
 ## 管理连击计数、时间窗口和分数乘数
 
-# 信号
-signal combo_activated(count: int, multiplier: float, position: Vector2)
-signal combo_reset()
-
 # 连击配置
 const COMBO_TIME_WINDOW: float = 1.5  # 判定时间窗口（秒）
 const COMBO_DECAY_TIME: float = 0.5   # 连击结束后的延迟时间
@@ -57,8 +53,9 @@ func trigger_merge(merge_position: Vector2) -> float:
 	is_active = true
 	decay_timer = 0
 
-	# 发射连击激活信号
-	combo_activated.emit(combo_count, current_multiplier, merge_position)
+	# 发射连击激活事件到 EventBus
+	var event_bus = get_node("/root/EventBus")
+	event_bus.emit_combo_activated(combo_count, current_multiplier, merge_position)
 
 	print("连击触发！次数：%d，乘数：%.1f，剩余时间：%.2f秒" % [combo_count, current_multiplier, combo_timer])
 
@@ -97,7 +94,9 @@ func get_combo_info() -> Dictionary:
 func _reset_combo() -> void:
 	if combo_count > 1:
 		print("连击重置，最高连击数：%d" % combo_count)
-		combo_reset.emit()
+		# 发射连击重置事件到 EventBus
+		var event_bus = get_node("/root/EventBus")
+		event_bus.emit_combo_reset()
 
 	combo_count = 0
 	current_multiplier = 1.0
