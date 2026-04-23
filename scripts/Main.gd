@@ -255,8 +255,10 @@ func _on_game_over() -> void:
 ## 调试：快速失败按钮
 func _on_debug_fail_button() -> void:
 	print("Main.gd: 快速失败按钮被点击")
-	var gm = get_node("/root/GameManager")
-	gm.game_over.emit()
+	#var gm = get_node("/root/GameManager")
+	#gm.game_over.emit()
+	var event_bus = get_node("/root/EventBus")
+	event_bus.emit_game_over()  # 使用 EventBus
 
 
 ## 更新 UI 显示
