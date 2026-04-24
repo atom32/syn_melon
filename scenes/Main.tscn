@@ -122,6 +122,11 @@ shape = SubResource("RectangleShape2D_ground")
 
 [node name="ComboDisplay" parent="." unique_id=568849209 instance=ExtResource("id_8k3mr")]
 anchors_preset = 5
+offset_left = -150.0
+offset_top = 0.0
+offset_right = 150.0
+offset_bottom = 100.0
+grow_vertical = 1
 
 [node name="GameOverPanel" type="Panel" parent="." unique_id=1367045092]
 z_index = 4000

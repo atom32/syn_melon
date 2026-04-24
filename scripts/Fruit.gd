@@ -4,7 +4,7 @@ class_name Fruit
 ## 水果脚本 - 核心物理和碰撞逻辑
 
 # 作弊功能开关（可在编辑器中设置，或通过 GameManager 全局控制）
-@export var enable_cheat_drag: bool = false
+@export var enable_cheat_drag: bool = true
 
 # 唯一 ID 计数器（用于防止双重触发）
 static var _next_id: int = 0
