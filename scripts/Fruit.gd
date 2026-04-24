@@ -3,6 +3,9 @@ class_name Fruit
 
 ## 水果脚本 - 核心物理和碰撞逻辑
 
+# 作弊功能开关（可在编辑器中设置，或通过 GameManager 全局控制）
+@export var enable_cheat_drag: bool = false
+
 # 唯一 ID 计数器（用于防止双重触发）
 static var _next_id: int = 0
 var _fruit_id: int = 0
@@ -29,6 +32,9 @@ var _fruit_scene: PackedScene = preload("res://scenes/Fruit.tscn")
 # 节点引用
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var sprite: Sprite2D = $Sprite2D
+
+# 拖拽状态
+var _is_being_dragged: bool = false
 
 
 func _ready() -> void:
@@ -71,6 +77,26 @@ func _ready() -> void:
 
 	# 连接碰撞音效信号（落地时播放）
 	body_entered.connect(_on_collision_sound)
+
+
+func _input(event: InputEvent) -> void:
+	# 检查是否启用作弊功能
+	if not enable_cheat_drag:
+		return
+
+	# 只处理鼠标右键
+	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT):
+		return
+
+	# 右键按下：开始拖拽
+	if event.pressed:
+		# 检查鼠标是否悬停在这个水果上
+		if _is_mouse_hovering():
+			_start_dragging()
+	# 右键松开：停止拖拽
+	else:
+		if _is_being_dragged:
+			_stop_dragging()
 
 
 func _physics_process(delta: float) -> void:
@@ -274,3 +300,70 @@ func _cleanup_merge(merge_key: String) -> void:
 ## 设置水果等级并立即应用
 func set_fruit_level(new_level: int) -> void:
 	level = new_level
+
+
+## ==========================================
+## 作弊功能：右键拖拽
+## ==========================================
+
+## 检查鼠标是否悬停在这个水果上
+func _is_mouse_hovering() -> bool:
+	var mouse_pos = get_global_mouse_position()
+	var distance = global_position.distance_to(mouse_pos)
+	var radius = FruitConfig.get_radius(level)
+	return distance <= radius
+
+
+## 开始拖拽
+func _start_dragging() -> void:
+	_is_being_dragged = true
+
+	# 冻结物理
+	freeze = true
+
+	# 禁用碰撞检测，避免拖拽时意外触发合成
+	collision_layer = 0
+	collision_mask = 0
+
+	# 设置更高的 z_index，确保拖拽时显示在最上层
+	z_index = 1000
+
+	print("[作弊] 开始拖拽水果等级", level)
+
+
+## 停止拖拽
+func _stop_dragging() -> void:
+	_is_being_dragged = false
+
+	# 恢复物理
+	freeze = false
+
+	# 恢复碰撞检测
+	collision_layer = 1
+	collision_mask = 1
+
+	# 恢复 z_index
+	z_index = 0
+
+	# 给一个向下的冲力，让它自然落下
+	apply_central_impulse(Vector2(0, 100))
+
+	print("[作弊] 停止拖拽水果等级", level)
+
+
+## 在拖拽时跟随鼠标
+func _process(delta: float) -> void:
+	if _is_being_dragged:
+		# 获取鼠标位置
+		var mouse_pos = get_global_mouse_position()
+
+		# 限制在游戏区域内（可选）
+		var x_min = 50.0
+		var x_max = 1100.0
+		var y_min = 150.0
+		var y_max = 800.0
+
+		var clamped_x = clamp(mouse_pos.x, x_min, x_max)
+		var clamped_y = clamp(mouse_pos.y, y_min, y_max)
+
+		global_position = Vector2(clamped_x, clamped_y)
