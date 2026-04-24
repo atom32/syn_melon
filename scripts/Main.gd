@@ -59,6 +59,10 @@ func _ready() -> void:
 	# 更新初始 UI
 	_update_ui()
 
+	# 通知场景管理器场景加载完成
+	var scene_mgr = get_node("/root/SceneManager")
+	scene_mgr.on_scene_loaded()
+
 
 ## 动态计算游戏边界（基于墙壁碰撞体）
 func _calculate_game_boundaries() -> void:

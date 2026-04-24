@@ -7,6 +7,7 @@ signal restart_requested
 var title_label: Label = null
 var score_label: Label = null
 var restart_button: Button = null
+var menu_button: Button = null
 
 
 func _ready() -> void:
@@ -74,16 +75,28 @@ func _setup_ui() -> void:
 	restart_button.add_theme_font_size_override("font_size", 24)
 	restart_button.size = Vector2(300, 60)
 
-	# 重要：按钮也需要在暂停时工作
+	# 重要：按钮需要在暂停时工作
 	restart_button.process_mode = Node.PROCESS_MODE_ALWAYS
 
-	# 连接信号并检查是否成功
-	var connected = restart_button.pressed.connect(_on_restart_pressed)
-	print("GameOverPanel: 按钮信号连接状态:", connected)
-
+	# 连接信号
+	restart_button.pressed.connect(_on_restart_pressed)
 	vbox.add_child(restart_button)
 
-	print("GameOverPanel UI 创建完成，按钮节点:", restart_button)
+	# 创建返回主菜单按钮
+	menu_button = Button.new()
+	menu_button.name = "MenuButton"
+	menu_button.text = "返回主菜单 (Back to Menu)"
+	menu_button.add_theme_font_size_override("font_size", 24)
+	menu_button.size = Vector2(300, 60)
+
+	# 重要：按钮需要在暂停时工作
+	menu_button.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	# 连接信号
+	menu_button.pressed.connect(_on_menu_button_pressed)
+	vbox.add_child(menu_button)
+
+	print("GameOverPanel UI 创建完成，按钮节点:", restart_button, menu_button)
 
 
 func show_game_over(final_score: int) -> void:
@@ -100,11 +113,18 @@ func show_game_over(final_score: int) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# 调试：按 R 键也可以重新开始
-	if visible and event is InputEventKey and event.pressed:
+	if not visible:
+		return
+
+	if event is InputEventKey and event.pressed:
+		# 按 R 键重新开始
 		if event.keycode == KEY_R:
-			print("GameOverPanel: 检测到 R 键，触发重新开始")
+			print("[GameOverPanel] 检测到 R 键，触发重新开始")
 			_on_restart_pressed()
+		# 按 ESC 键返回主菜单
+		elif event.keycode == KEY_ESCAPE:
+			print("[GameOverPanel] 检测到 ESC 键，返回主菜单")
+			_on_menu_button_pressed()
 
 
 func hide_panel() -> void:
@@ -112,15 +132,12 @@ func hide_panel() -> void:
 
 
 func _on_restart_pressed() -> void:
-	print("重新开始游戏")
-
-	# 先取消暂停，否则 reload_current_scene 不会生效
-	get_tree().paused = false
-
-	# 使用 call_deferred 确保在当前帧完成后重载场景
-	call_deferred("_reload_scene")
+	print("[GameOverPanel] 重新开始游戏")
+	var scene_mgr = get_node("/root/SceneManager")
+	scene_mgr.change_scene("res://scenes/Main.tscn")
 
 
-func _reload_scene() -> void:
-	print("正在重新加载场景...")
-	get_tree().reload_current_scene()
+func _on_menu_button_pressed() -> void:
+	print("[GameOverPanel] 返回主菜单")
+	var scene_mgr = get_node("/root/SceneManager")
+	scene_mgr.change_scene("res://scenes/MainMenu.tscn")
