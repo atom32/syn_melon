@@ -132,12 +132,34 @@ func hide_panel() -> void:
 
 
 func _on_restart_pressed() -> void:
-	print("[GameOverPanel] 重新开始游戏")
+	print("[GameOverPanel] 重新开始游戏按钮被点击")
+
+	# 先取消暂停（非常重要！）
+	get_tree().paused = false
+
+	# 延迟一帧确保暂停状态完全解除
+	await get_tree().process_frame
+
 	var scene_mgr = get_node("/root/SceneManager")
-	scene_mgr.change_scene("res://scenes/Main.tscn")
+	if scene_mgr:
+		scene_mgr.change_scene("res://scenes/Main.tscn")
+		print("[GameOverPanel] SceneManager 调用完成")
+	else:
+		print("[GameOverPanel] 错误：找不到 SceneManager")
 
 
 func _on_menu_button_pressed() -> void:
-	print("[GameOverPanel] 返回主菜单")
+	print("[GameOverPanel] 返回主菜单按钮被点击")
+
+	# 先取消暂停（非常重要！）
+	get_tree().paused = false
+
+	# 延迟一帧确保暂停状态完全解除
+	await get_tree().process_frame
+
 	var scene_mgr = get_node("/root/SceneManager")
-	scene_mgr.change_scene("res://scenes/MainMenu.tscn")
+	if scene_mgr:
+		scene_mgr.change_scene("res://scenes/MainMenu.tscn")
+		print("[GameOverPanel] SceneManager 调用完成")
+	else:
+		print("[GameOverPanel] 错误：找不到 SceneManager")
