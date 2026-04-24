@@ -17,9 +17,18 @@ var _is_transitioning: bool = false
 
 
 func _ready() -> void:
-	# 创建淡入淡出覆盖层
-	_setup_fade_overlay()
 	print("[SceneManager] 初始化完成")
+	# 不在 _ready() 中创建覆盖层，在首次使用时创建
+	call_deferred("_ensure_fade_overlay_created")
+
+
+## 确保淡入淡出覆盖层已创建
+func _ensure_fade_overlay_created() -> void:
+	if _fade_canvas != null:
+		return  # 已经创建过了
+
+	print("[SceneManager] 创建淡入淡出覆盖层")
+	_setup_fade_overlay()
 
 
 ## 初始化淡入淡出覆盖层
@@ -47,6 +56,9 @@ func change_scene(scene_path: String) -> void:
 	_is_transitioning = true
 
 	print("[SceneManager] 开始切换到场景: ", scene_path)
+
+	# 确保覆盖层已创建
+	_ensure_fade_overlay_created()
 
 	# 创建 Tween
 	_tween = create_tween()
