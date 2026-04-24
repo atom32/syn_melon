@@ -3,18 +3,15 @@ extends Node
 
 ## 特效管理器 - 统一管理游戏中的视觉反馈特效
 
-
-## 创建超大爆炸特效（大西瓜合成）
-static func create_mega_explosion(parent: Node, position: Vector2, color: Color) -> void:
-	var mega_scene = preload("res://scenes/MegaExplosionEffect.tscn")
-	var mega_explosion = mega_scene.instantiate()
-	mega_explosion.global_position = position
-	parent.add_child(mega_explosion)
-	mega_explosion.explode(color, position)
+# 物理爆炸参数
+const EXPLOSION_RADIUS: float = 150.0      # 爆炸影响半径
+const EXPLOSION_FORCE: float = 800.0       # 爆炸冲力
+const EXPLOSION_FORCE_MEGA: float = 2000.0 # 超大爆炸冲力
 
 
-## 创建爆炸粒子特效
+## 创建带物理效果的爆炸（普通合成）
 static func create_explosion(parent: Node, position: Vector2, color: Color) -> void:
+	# 先创建视觉粒子效果
 	var container = Node2D.new()
 	container.z_index = 500
 	container.global_position = position
@@ -27,6 +24,90 @@ static func create_explosion(parent: Node, position: Vector2, color: Color) -> v
 	# 自动清理
 	var cleanup_timer = parent.get_tree().create_timer(1.2)
 	cleanup_timer.timeout.connect(container.queue_free)
+
+	# 添加物理震飞效果
+	_apply_physics_explosion(parent, position, EXPLOSION_RADIUS, EXPLOSION_FORCE)
+
+
+## 创建超大爆炸（大西瓜合成，包含强物理效果）
+static func create_mega_explosion(parent: Node, position: Vector2, color: Color) -> void:
+	var mega_scene = preload("res://scenes/MegaExplosionEffect.tscn")
+	var mega_explosion = mega_scene.instantiate()
+	mega_explosion.global_position = position
+	parent.add_child(mega_explosion)
+	mega_explosion.explode(color, position)
+
+	# 添加更强的物理震飞效果
+	_apply_physics_explosion(parent, position, EXPLOSION_RADIUS * 1.5, EXPLOSION_FORCE_MEGA)
+
+
+## 应用物理爆炸效果（震飞周围水果）
+static func _apply_physics_explosion(parent: Node, position: Vector2, radius: float, force: float) -> void:
+	# 创建一个临时的 PhysicsBlastEffect 节点来处理物理爆炸
+	var blast = PhysicsBlastEffect.new()
+	parent.add_child(blast)
+	blast.explode(position, radius, force)
+
+
+## PhysicsBlastEffect 内部类 - 处理物理爆炸
+class PhysicsBlastEffect extends Area2D:
+	var _position: Vector2
+	var _radius: float
+	var _force: float
+
+	func explode(position: Vector2, radius: float, force: float) -> void:
+		_position = position
+		_radius = radius
+		_force = force
+
+		global_position = position
+
+		# 创建碰撞形状
+		var collision = CollisionShape2D.new()
+		var shape = CircleShape2D.new()
+		shape.radius = radius
+		collision.shape = shape
+		add_child(collision)
+
+		# 设置碰撞层
+		collision_layer = 0
+		collision_mask = 1
+
+		# 监控开启
+		monitoring = true
+		monitorable = false
+
+		# 使用延迟来确保 Area2D 生效
+		await get_tree().process_frame
+		_apply_blast()
+
+	func _apply_blast() -> void:
+		var overlapping_bodies = get_overlapping_bodies()
+
+		for body in overlapping_bodies:
+			if not body is RigidBody2D:
+				continue
+
+			var fruit = body as RigidBody2D
+			var direction = (fruit.global_position - _position).normalized()
+			var distance = fruit.global_position.distance_to(_position)
+
+			# 力的大小根据距离衰减
+			var distance_factor = 1.0 - (distance / _radius)
+			distance_factor = max(distance_factor, 0.0)
+
+			# 应用冲力
+			var impulse = direction * _force * distance_factor
+			fruit.apply_central_impulse(impulse)
+
+			# 添加随机旋转
+			var random_torque = randf_range(-1000, 1000) * distance_factor
+			fruit.apply_torque_impulse(random_torque)
+
+		print("[物理爆炸] 位置:", _position, "半径:", _radius, "力:", _force, "影响水果数:", overlapping_bodies.size())
+
+		# 清理
+		queue_free()
 
 
 ## 创建单个粒子
