@@ -42,6 +42,9 @@ func _ready() -> void:
 	_fruit_id = _next_id
 	_next_id += 1
 
+	# 添加到 "fruits" 组，便于全局管理
+	add_to_group("fruits")
+
 	# 设置碰撞层
 	collision_layer = 1
 	collision_mask = 1

@@ -249,8 +249,8 @@ func _on_game_over() -> void:
 		print("Main.gd: 新纪录！")
 		_update_high_score_display()
 
-	# 暂停游戏
-	get_tree().paused = true
+	# 暂停所有水果（而不是整个游戏树）
+	_pause_all_fruits()
 
 	# 显示游戏结束面板
 	game_over_panel.call("show_game_over", final_score)
@@ -302,3 +302,17 @@ func _update_high_score_display() -> void:
 	var save_mgr = get_node("/root/SaveManager")
 	var high_score = save_mgr.get_high_score()
 	ui_label_high_score.text = "Best: %d" % high_score
+
+
+## 暂停所有水果（游戏结束时）
+func _pause_all_fruits() -> void:
+	# 获取场景中所有水果
+	var all_nodes = get_tree().get_nodes_in_group("fruits")
+	var paused_count = 0
+
+	for node in all_nodes:
+		if node is RigidBody2D:
+			node.freeze = true
+			paused_count += 1
+
+	print("[Main.gd] 已暂停 ", paused_count, " 个水果，游戏保持运行（UI仍可响应）")
