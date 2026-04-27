@@ -1,0 +1,595 @@
+{
+  "schema_version": "1.0",
+  "game_name": "Abyssal Merge Defense",
+  "factions": {
+    "abyss": {
+      "id": "abyss",
+      "name": "深渊",
+      "description": "来自深渊的恶魔生物",
+      "base_color": [0.8, 0.2, 0.2, 1.0],
+      "units": [
+        {
+          "level": 0,
+          "name": "深渊小魔",
+          "radius": 15.0,
+          "mass": 1.0,
+          "color": [1.0, 0.2, 0.2, 1.0],
+          "cost": 10,
+          "battle_stats": {
+            "hp": 50,
+            "damage": 10,
+            "attack_speed": 1.0,
+            "range": 50.0,
+            "movement_speed": 100.0
+          }
+        },
+        {
+          "level": 1,
+          "name": "深渊魔犬",
+          "radius": 22.0,
+          "mass": 2.0,
+          "color": [1.0, 0.4, 0.7, 1.0],
+          "cost": 20,
+          "battle_stats": {
+            "hp": 80,
+            "damage": 15,
+            "attack_speed": 1.2,
+            "range": 60.0,
+            "movement_speed": 110.0
+          }
+        },
+        {
+          "level": 2,
+          "name": "深渊魔蝠",
+          "radius": 30.0,
+          "mass": 3.0,
+          "color": [0.6, 0.2, 0.8, 1.0],
+          "cost": 30,
+          "battle_stats": {
+            "hp": 120,
+            "damage": 20,
+            "attack_speed": 1.4,
+            "range": 70.0,
+            "movement_speed": 120.0
+          }
+        },
+        {
+          "level": 3,
+          "name": "深渊魔火",
+          "radius": 38.0,
+          "mass": 5.0,
+          "color": [1.0, 0.6, 0.0, 1.0],
+          "cost": 50,
+          "battle_stats": {
+            "hp": 180,
+            "damage": 30,
+            "attack_speed": 1.0,
+            "range": 80.0,
+            "movement_speed": 90.0
+          }
+        },
+        {
+          "level": 4,
+          "name": "深渊炎魔",
+          "radius": 48.0,
+          "mass": 8.0,
+          "color": [1.0, 0.4, 0.2, 1.0],
+          "cost": 80,
+          "battle_stats": {
+            "hp": 250,
+            "damage": 40,
+            "attack_speed": 0.9,
+            "range": 90.0,
+            "movement_speed": 85.0
+          }
+        },
+        {
+          "level": 5,
+          "name": "深渊魅魔",
+          "radius": 58.0,
+          "mass": 12.0,
+          "color": [1.0, 0.7, 0.6, 1.0],
+          "cost": 120,
+          "battle_stats": {
+            "hp": 350,
+            "damage": 55,
+            "attack_speed": 1.1,
+            "range": 100.0,
+            "movement_speed": 95.0
+          }
+        },
+        {
+          "level": 6,
+          "name": "深渊毒龙",
+          "radius": 68.0,
+          "mass": 18.0,
+          "color": [1.0, 0.8, 0.2, 1.0],
+          "cost": 180,
+          "battle_stats": {
+            "hp": 500,
+            "damage": 70,
+            "attack_speed": 0.8,
+            "range": 110.0,
+            "movement_speed": 80.0
+          }
+        },
+        {
+          "level": 7,
+          "name": "深渊魔像",
+          "radius": 80.0,
+          "mass": 25.0,
+          "color": [0.6, 0.4, 0.2, 1.0],
+          "cost": 250,
+          "battle_stats": {
+            "hp": 700,
+            "damage": 90,
+            "attack_speed": 0.7,
+            "range": 120.0,
+            "movement_speed": 70.0
+          }
+        },
+        {
+          "level": 8,
+          "name": "深渊领主",
+          "radius": 95.0,
+          "mass": 35.0,
+          "color": [0.2, 0.7, 0.3, 1.0],
+          "cost": 350,
+          "battle_stats": {
+            "hp": 1000,
+            "damage": 120,
+            "attack_speed": 0.6,
+            "range": 130.0,
+            "movement_speed": 60.0
+          }
+        },
+        {
+          "level": 9,
+          "name": "深渊魔王",
+          "radius": 110.0,
+          "mass": 50.0,
+          "color": [0.3, 0.8, 0.4, 1.0],
+          "cost": 500,
+          "battle_stats": {
+            "hp": 1500,
+            "damage": 150,
+            "attack_speed": 0.5,
+            "range": 140.0,
+            "movement_speed": 50.0
+          }
+        },
+        {
+          "level": 10,
+          "name": "深渊魔神",
+          "radius": 130.0,
+          "mass": 80.0,
+          "color": [0.8, 1.0, 0.8, 1.0],
+          "cost": 750,
+          "battle_stats": {
+            "hp": 2500,
+            "damage": 200,
+            "attack_speed": 0.4,
+            "range": 150.0,
+            "movement_speed": 40.0
+          }
+        }
+      ]
+    },
+    "undead": {
+      "id": "undead",
+      "name": "亡灵",
+      "description": "从地底爬起的亡者大军",
+      "base_color": [0.4, 0.8, 0.6, 1.0],
+      "units": [
+        {
+          "level": 0,
+          "name": "骸骨兵",
+          "radius": 15.0,
+          "mass": 1.0,
+          "color": [0.9, 0.9, 0.9, 1.0],
+          "cost": 10,
+          "battle_stats": {
+            "hp": 40,
+            "damage": 8,
+            "attack_speed": 1.2,
+            "range": 45.0,
+            "movement_speed": 105.0
+          }
+        },
+        {
+          "level": 1,
+          "name": "僵尸",
+          "radius": 22.0,
+          "mass": 2.0,
+          "color": [0.6, 0.7, 0.5, 1.0],
+          "cost": 20,
+          "battle_stats": {
+            "hp": 70,
+            "damage": 12,
+            "attack_speed": 1.0,
+            "range": 55.0,
+            "movement_speed": 95.0
+          }
+        },
+        {
+          "level": 2,
+          "name": "幽灵",
+          "radius": 30.0,
+          "mass": 3.0,
+          "color": [0.7, 0.8, 0.9, 1.0],
+          "cost": 30,
+          "battle_stats": {
+            "hp": 100,
+            "damage": 18,
+            "attack_speed": 1.3,
+            "range": 65.0,
+            "movement_speed": 115.0
+          }
+        },
+        {
+          "level": 3,
+          "name": "食尸鬼",
+          "radius": 38.0,
+          "mass": 5.0,
+          "color": [0.5, 0.6, 0.4, 1.0],
+          "cost": 50,
+          "battle_stats": {
+            "hp": 160,
+            "damage": 25,
+            "attack_speed": 1.1,
+            "range": 75.0,
+            "movement_speed": 100.0
+          }
+        },
+        {
+          "level": 4,
+          "name": "女妖",
+          "radius": 48.0,
+          "mass": 8.0,
+          "color": [0.8, 0.9, 1.0, 1.0],
+          "cost": 80,
+          "battle_stats": {
+            "hp": 220,
+            "damage": 35,
+            "attack_speed": 1.4,
+            "range": 85.0,
+            "movement_speed": 90.0
+          }
+        },
+        {
+          "level": 5,
+          "name": "骷髅法师",
+          "radius": 58.0,
+          "mass": 12.0,
+          "color": [0.7, 0.7, 0.6, 1.0],
+          "cost": 120,
+          "battle_stats": {
+            "hp": 300,
+            "damage": 50,
+            "attack_speed": 0.9,
+            "range": 95.0,
+            "movement_speed": 85.0
+          }
+        },
+        {
+          "level": 6,
+          "name": "死亡骑士",
+          "radius": 68.0,
+          "mass": 18.0,
+          "color": [0.5, 0.5, 0.5, 1.0],
+          "cost": 180,
+          "battle_stats": {
+            "hp": 450,
+            "damage": 65,
+            "attack_speed": 0.8,
+            "range": 105.0,
+            "movement_speed": 75.0
+          }
+        },
+        {
+          "level": 7,
+          "name": "巫妖",
+          "radius": 80.0,
+          "mass": 25.0,
+          "color": [0.6, 0.8, 0.9, 1.0],
+          "cost": 250,
+          "battle_stats": {
+            "hp": 600,
+            "damage": 85,
+            "attack_speed": 0.7,
+            "range": 115.0,
+            "movement_speed": 65.0
+          }
+        },
+        {
+          "level": 8,
+          "name": "尸鬼王",
+          "radius": 95.0,
+          "mass": 35.0,
+          "color": [0.4, 0.6, 0.5, 1.0],
+          "cost": 350,
+          "battle_stats": {
+            "hp": 850,
+            "damage": 110,
+            "attack_speed": 0.6,
+            "range": 125.0,
+            "movement_speed": 55.0
+          }
+        },
+        {
+          "level": 9,
+          "name": "死神",
+          "radius": 110.0,
+          "mass": 50.0,
+          "color": [0.3, 0.3, 0.35, 1.0],
+          "cost": 500,
+          "battle_stats": {
+            "hp": 1200,
+            "damage": 140,
+            "attack_speed": 0.5,
+            "range": 135.0,
+            "movement_speed": 45.0
+          }
+        },
+        {
+          "level": 10,
+          "name": "亡灵之主",
+          "radius": 130.0,
+          "mass": 80.0,
+          "color": [0.5, 0.7, 0.6, 1.0],
+          "cost": 750,
+          "battle_stats": {
+            "hp": 2000,
+            "damage": 190,
+            "attack_speed": 0.4,
+            "range": 145.0,
+            "movement_speed": 35.0
+          }
+        }
+      ]
+    },
+    "mechanical": {
+      "id": "mechanical",
+      "name": "机械",
+      "description": "未来科技打造的机械军团",
+      "base_color": [0.4, 0.6, 0.8, 1.0],
+      "units": [
+        {
+          "level": 0,
+          "name": "微型机器人",
+          "radius": 15.0,
+          "mass": 1.0,
+          "color": [0.6, 0.7, 0.8, 1.0],
+          "cost": 10,
+          "battle_stats": {
+            "hp": 60,
+            "damage": 12,
+            "attack_speed": 1.5,
+            "range": 55.0,
+            "movement_speed": 100.0
+          }
+        },
+        {
+          "level": 1,
+          "name": "侦察机",
+          "radius": 22.0,
+          "mass": 2.0,
+          "color": [0.5, 0.6, 0.7, 1.0],
+          "cost": 20,
+          "battle_stats": {
+            "hp": 90,
+            "damage": 16,
+            "attack_speed": 1.3,
+            "range": 60.0,
+            "movement_speed": 120.0
+          }
+        },
+        {
+          "level": 2,
+          "name": "攻击无人机",
+          "radius": 30.0,
+          "mass": 3.0,
+          "color": [0.4, 0.5, 0.6, 1.0],
+          "cost": 30,
+          "battle_stats": {
+            "hp": 130,
+            "damage": 22,
+            "attack_speed": 1.2,
+            "range": 70.0,
+            "movement_speed": 110.0
+          }
+        },
+        {
+          "level": 3,
+          "name": "防卫机",
+          "radius": 38.0,
+          "mass": 5.0,
+          "color": [0.5, 0.5, 0.6, 1.0],
+          "cost": 50,
+          "battle_stats": {
+            "hp": 200,
+            "damage": 28,
+            "attack_speed": 1.0,
+            "range": 80.0,
+            "movement_speed": 85.0
+          }
+        },
+        {
+          "level": 4,
+          "name": "突击机甲",
+          "radius": 48.0,
+          "mass": 8.0,
+          "color": [0.4, 0.6, 0.5, 1.0],
+          "cost": 80,
+          "battle_stats": {
+            "hp": 280,
+            "damage": 38,
+            "attack_speed": 0.9,
+            "range": 90.0,
+            "movement_speed": 90.0
+          }
+        },
+        {
+          "level": 5,
+          "name": "重装机兵",
+          "radius": 58.0,
+          "mass": 12.0,
+          "color": [0.5, 0.7, 0.6, 1.0],
+          "cost": 120,
+          "battle_stats": {
+            "hp": 400,
+            "damage": 48,
+            "attack_speed": 0.8,
+            "range": 100.0,
+            "movement_speed": 75.0
+          }
+        },
+        {
+          "level": 6,
+          "name": "激光炮台",
+          "radius": 68.0,
+          "mass": 18.0,
+          "color": [0.6, 0.8, 0.7, 1.0],
+          "cost": 180,
+          "battle_stats": {
+            "hp": 550,
+            "damage": 60,
+            "attack_speed": 0.7,
+            "range": 110.0,
+            "movement_speed": 65.0
+          }
+        },
+        {
+          "level": 7,
+          "name": "战斗核心",
+          "radius": 80.0,
+          "mass": 25.0,
+          "color": [0.5, 0.7, 0.8, 1.0],
+          "cost": 250,
+          "battle_stats": {
+            "hp": 750,
+            "damage": 75,
+            "attack_speed": 0.6,
+            "range": 120.0,
+            "movement_speed": 60.0
+          }
+        },
+        {
+          "level": 8,
+          "name": "泰坦机甲",
+          "radius": 95.0,
+          "mass": 35.0,
+          "color": [0.4, 0.6, 0.7, 1.0],
+          "cost": 350,
+          "battle_stats": {
+            "hp": 1050,
+            "damage": 95,
+            "attack_speed": 0.5,
+            "range": 130.0,
+            "movement_speed": 50.0
+          }
+        },
+        {
+          "level": 9,
+          "name": "毁灭战舰",
+          "radius": 110.0,
+          "mass": 50.0,
+          "color": [0.3, 0.5, 0.6, 1.0],
+          "cost": 500,
+          "battle_stats": {
+            "hp": 1400,
+            "damage": 125,
+            "attack_speed": 0.45,
+            "range": 140.0,
+            "movement_speed": 40.0
+          }
+        },
+        {
+          "level": 10,
+          "name": "机械神",
+          "radius": 130.0,
+          "mass": 80.0,
+          "color": [0.6, 0.8, 0.9, 1.0],
+          "cost": 750,
+          "battle_stats": {
+            "hp": 2300,
+            "damage": 175,
+            "attack_speed": 0.4,
+            "range": 150.0,
+            "movement_speed": 30.0
+          }
+        }
+      ]
+    }
+  },
+  "foreign_units": {
+    "description": "异种单位 - 不可合成，可拖入战场自毁造成范围伤害",
+    "units": [
+      {
+        "id": "chaos_orb",
+        "name": "混沌球",
+        "radius": 35.0,
+        "mass": 4.0,
+        "color": [1.0, 1.0, 1.0, 1.0],
+        "cost": 0,
+        "battle_stats": {
+          "hp": 100,
+          "damage": 0,
+          "attack_speed": 0.0,
+          "range": 0.0,
+          "movement_speed": 0.0,
+          "explosion_damage": 200,
+          "explosion_radius": 100.0
+        },
+        "spawn_chance": 0.05,
+        "description": "不稳定的能量球，拖入战场后自爆"
+      },
+      {
+        "id": "void_crystal",
+        "name": "虚空水晶",
+        "radius": 45.0,
+        "mass": 6.0,
+        "color": [0.7, 0.0, 1.0, 1.0],
+        "cost": 0,
+        "battle_stats": {
+          "hp": 150,
+          "damage": 0,
+          "attack_speed": 0.0,
+          "range": 0.0,
+          "movement_speed": 0.0,
+          "explosion_damage": 350,
+          "explosion_radius": 150.0
+        },
+        "spawn_chance": 0.03,
+        "description": "虚空能量凝聚，爆炸造成巨额伤害"
+      },
+      {
+        "id": "time_bomb",
+        "name": "时空炸弹",
+        "radius": 40.0,
+        "mass": 5.0,
+        "color": [0.0, 1.0, 1.0, 1.0],
+        "cost": 0,
+        "battle_stats": {
+          "hp": 80,
+          "damage": 0,
+          "attack_speed": 0.0,
+          "range": 0.0,
+          "movement_speed": 0.0,
+          "explosion_damage": 500,
+          "explosion_radius": 200.0,
+          "time_slow_duration": 3.0
+        },
+        "spawn_chance": 0.02,
+        "description": "爆炸伤害所有敌人并减速"
+      }
+    ]
+  },
+  "game_config": {
+    "max_level": 10,
+    "min_spawn_level": 0,
+    "max_spawn_level": 3,
+    "base_fruit_cost": 10,
+    "foreign_unit_spawn_rate": 0.05
+  }
+}

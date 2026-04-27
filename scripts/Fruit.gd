@@ -3,8 +3,11 @@ class_name Fruit
 
 ## 水果脚本 - 核心物理和碰撞逻辑
 
-# 作弊功能开关（可在编辑器中设置，或通过 GameManager 全局控制）
-@export var enable_cheat_drag: bool = true
+## 拖拽到战场信号
+signal drag_to_battle_requested(fruit: Fruit)
+
+## 作弊功能开关（可在编辑器中设置，或通过 GameManager 全局控制）
+@export var enable_cheat_drag: bool = false  # 正式版默认关闭
 
 # 唯一 ID 计数器（用于防止双重触发）
 static var _next_id: int = 0
@@ -83,23 +86,26 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# 检查是否启用作弊功能
-	if not enable_cheat_drag:
-		return
-
 	# 只处理鼠标右键
 	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT):
 		return
 
-	# 右键按下：开始拖拽
+	# 右键按下：检查是否是拖拽到战场
 	if event.pressed:
 		# 检查鼠标是否悬停在这个水果上
 		if _is_mouse_hovering():
-			_start_dragging()
-	# 右键松开：停止拖拽
-	else:
-		if _is_being_dragged:
-			_stop_dragging()
+			# 请求拖拽到战场
+			drag_to_battle_requested.emit(self)
+			get_viewport().set_input_as_handled()
+
+	# 作弊功能：如果是作弊模式且继续拖动
+	if enable_cheat_drag:
+		if event.pressed:
+			if _is_mouse_hovering():
+				_start_dragging()
+		else:
+			if _is_being_dragged:
+				_stop_dragging()
 
 
 func _physics_process(delta: float) -> void:

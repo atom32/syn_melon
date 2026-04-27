@@ -15,15 +15,15 @@ const WALL_MARGIN: float = 10.0
 # 发射冷却时间（秒）
 const COOLDOWN_TIME: float = 0.5
 
-# UI 引用
-@onready var ui_label_next: Label = $UIBackground/NextLabel
-@onready var ui_label_score: Label = $UIBackground/ScoreLabel
-@onready var ui_label_high_score: Label = $UIBackground/HighScoreLabel
-@onready var ui_preview_container: Control = $UIBackground/PreviewContainer
-@onready var cooldown_timer: Timer = $CooldownTimer
-@onready var game_over_panel: Panel = $GameOverPanel
-@onready var debug_fail_button: Button = $UIBackground/DebugFailButton
-@onready var combo_display: Control = $ComboDisplay
+# UI 引用（移除 @onready，在 _ready 中安全获取）
+var ui_label_next: Label = null
+var ui_label_score: Label = null
+var ui_label_high_score: Label = null
+var ui_preview_container: Control = null
+var cooldown_timer: Timer = null
+var game_over_panel: Panel = null
+var debug_fail_button: Button = null
+var combo_display: Control = null
 
 # 当前预览水果（跟随鼠标）
 var _preview_fruit: Fruit = null
@@ -39,10 +39,16 @@ var _can_spawn: bool = true
 
 
 func _ready() -> void:
+	# 安全获取所有节点引用
+	_get_node_references()
+
 	# 设置冷却计时器
-	cooldown_timer.wait_time = COOLDOWN_TIME
-	cooldown_timer.one_shot = true
-	cooldown_timer.timeout.connect(_on_cooldown_finished)
+	if cooldown_timer:
+		cooldown_timer.wait_time = COOLDOWN_TIME
+		cooldown_timer.one_shot = true
+		cooldown_timer.timeout.connect(_on_cooldown_finished)
+	else:
+		push_error("Main.gd: CooldownTimer 节点未找到！")
 
 	# 动态计算游戏边界
 	_calculate_game_boundaries()
@@ -51,7 +57,8 @@ func _ready() -> void:
 	call_deferred("_connect_eventbus_signals")
 
 	# 连接调试按钮
-	debug_fail_button.pressed.connect(_on_debug_fail_button)
+	if debug_fail_button:
+		debug_fail_button.pressed.connect(_on_debug_fail_button)
 
 	# 加载并显示最高分
 	_load_high_score()
@@ -60,15 +67,34 @@ func _ready() -> void:
 	_update_ui()
 
 	# 通知场景管理器场景加载完成
-	var scene_mgr = get_node("/root/SceneManager")
-	scene_mgr.on_scene_loaded()
+	var scene_mgr = get_node_or_null("/root/SceneManager")
+	if scene_mgr and scene_mgr.has_method("on_scene_loaded"):
+		scene_mgr.on_scene_loaded()
+
+
+## 安全获取节点引用
+func _get_node_references() -> void:
+	ui_label_next = get_node_or_null("UIBackground/NextLabel")
+	ui_label_score = get_node_or_null("UIBackground/ScoreLabel")
+	ui_label_high_score = get_node_or_null("UIBackground/HighScoreLabel")
+	ui_preview_container = get_node_or_null("UIBackground/PreviewContainer")
+	cooldown_timer = get_node_or_null("CooldownTimer")
+	game_over_panel = get_node_or_null("GameOverPanel")
+	debug_fail_button = get_node_or_null("UIBackground/DebugFailButton")
+	combo_display = get_node_or_null("ComboDisplay")
+
+	# 检查关键节点
+	if not cooldown_timer:
+		push_error("Main.gd: CooldownTimer 节点未找到")
+	if not ui_label_next:
+		push_error("Main.gd: NextLabel 节点未找到")
 
 
 ## 动态计算游戏边界（基于墙壁碰撞体）
 func _calculate_game_boundaries() -> void:
 	# 获取左右墙的碰撞形状
-	var left_wall = $LeftWall/CollisionShape2D
-	var right_wall = $RightWall/CollisionShape2D
+	var left_wall = get_node_or_null("LeftWall/CollisionShape2D")
+	var right_wall = get_node_or_null("RightWall/CollisionShape2D")
 
 	if not left_wall or not right_wall:
 		push_error("无法找到墙壁碰撞体！使用默认边界")
@@ -113,11 +139,10 @@ func _on_cooldown_finished() -> void:
 ## 连接 EventBus 信号
 func _connect_eventbus_signals() -> void:
 	# 检查 EventBus 是否存在
-	if not has_node("/root/EventBus"):
+	var bus = get_node_or_null("/root/EventBus")
+	if not bus:
 		push_error("EventBus autoload not found!")
 		return
-
-	var bus = get_node("/root/EventBus")
 
 	# 连接水果相关事件
 	bus.fruit_spawned.connect(_on_fruit_spawned)
@@ -164,7 +189,11 @@ func _on_mouse_pressed(x_position: float) -> void:
 		return
 
 	# 创建预览水果
-	var gm = get_node("/root/GameManager")
+	var gm = get_node_or_null("/root/GameManager")
+	if not gm:
+		push_error("Main.gd: GameManager 未找到")
+		return
+
 	_preview_fruit = gm.spawn_fruit(Vector2(0, SPAWN_Y))
 	add_child(_preview_fruit)
 
@@ -192,7 +221,8 @@ func _on_mouse_released() -> void:
 
 	# 开始冷却
 	_can_spawn = false
-	cooldown_timer.start()
+	if cooldown_timer:
+		cooldown_timer.start()
 
 	# 更新 UI 显示下一个水果
 	_update_ui()
@@ -222,12 +252,14 @@ func _on_combo_activated(count: int, multiplier: float, position: Vector2) -> vo
 
 ## 分数变化回调
 func _on_score_changed(new_score: int) -> void:
-	ui_label_score.text = "分数: %d" % new_score
+	if ui_label_score:
+		ui_label_score.text = "分数: %d" % new_score
 
 
 ## 最高分更新回调
 func _on_high_score_updated(new_high_score: int) -> void:
-	ui_label_high_score.text = "Best: %d" % new_high_score
+	if ui_label_high_score:
+		ui_label_high_score.text = "Best: %d" % new_high_score
 	print("Main.gd: 最高分更新 - %d" % new_high_score)
 
 
@@ -236,44 +268,51 @@ func _on_game_over() -> void:
 	print("Main.gd: 游戏结束信号已接收")
 
 	# 播放游戏结束音效
-	var audio = get_node("/root/AudioManager")
-	audio.play_game_over()
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio:
+		audio.play_game_over()
 
 	# 检查并更新最高分
-	var gm = get_node("/root/GameManager")
-	var save_mgr = get_node("/root/SaveManager")
-	var final_score = gm.get_score()
+	var gm = get_node_or_null("/root/GameManager")
+	var save_mgr = get_node_or_null("/root/SaveManager")
 
-	var is_new_record = save_mgr.check_and_update_high_score(final_score)
-	if is_new_record:
-		print("Main.gd: 新纪录！")
-		_update_high_score_display()
+	if gm and save_mgr:
+		var final_score = gm.get_score()
+		var is_new_record = save_mgr.check_and_update_high_score(final_score)
+		if is_new_record:
+			print("Main.gd: 新纪录！")
+			_update_high_score_display()
 
 	# 暂停所有水果（而不是整个游戏树）
 	_pause_all_fruits()
 
 	# 显示游戏结束面板
-	game_over_panel.call("show_game_over", final_score)
+	if game_over_panel and game_over_panel.has_method("show_game_over"):
+		if gm:
+			game_over_panel.call("show_game_over", gm.get_score())
 
 
 ## 调试：快速失败按钮
 func _on_debug_fail_button() -> void:
 	print("Main.gd: 快速失败按钮被点击")
-	#var gm = get_node("/root/GameManager")
-	#gm.game_over.emit()
-	var event_bus = get_node("/root/EventBus")
-	event_bus.emit_game_over()  # 使用 EventBus
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		event_bus.emit_game_over()
 
 
 ## 更新 UI 显示
 func _update_ui() -> void:
 	# 获取 GameManager 引用
-	var gm = get_node("/root/GameManager")
+	var gm = get_node_or_null("/root/GameManager")
+	if not gm:
+		return
 
 	# 更新下一个水果文本（显示当前待发射的）
 	var next_level: int = gm.get_current_fruit_level()
 	var fruit_names: Array = ["樱桃", "草莓", "葡萄", "橙子", "柿子", "桃子", "菠萝", "椰子", "半个西瓜", "大西瓜", "超级大西瓜"]
-	ui_label_next.text = "下一个: %s" % fruit_names[next_level]
+
+	if ui_label_next:
+		ui_label_next.text = "下一个: %s" % fruit_names[next_level]
 
 	# 更新 UI 预览水果
 	if _ui_preview_fruit and is_instance_valid(_ui_preview_fruit):
@@ -284,24 +323,26 @@ func _update_ui() -> void:
 	_ui_preview_fruit.freeze = true
 
 	# 将水果放置在容器中心
-	var container_size = ui_preview_container.size
-	_ui_preview_fruit.position = Vector2(container_size.x / 2, container_size.y / 2)
-
-	ui_preview_container.add_child(_ui_preview_fruit)
+	if ui_preview_container:
+		var container_size = ui_preview_container.size
+		_ui_preview_fruit.position = Vector2(container_size.x / 2, container_size.y / 2)
+		ui_preview_container.add_child(_ui_preview_fruit)
 
 
 ## 加载最高分
 func _load_high_score() -> void:
-	var save_mgr = get_node("/root/SaveManager")
-	var high_score = save_mgr.get_high_score()
-	_update_high_score_display()
+	var save_mgr = get_node_or_null("/root/SaveManager")
+	if save_mgr:
+		var high_score = save_mgr.get_high_score()
+		_update_high_score_display()
 
 
 ## 更新最高分显示
 func _update_high_score_display() -> void:
-	var save_mgr = get_node("/root/SaveManager")
-	var high_score = save_mgr.get_high_score()
-	ui_label_high_score.text = "Best: %d" % high_score
+	var save_mgr = get_node_or_null("/root/SaveManager")
+	if save_mgr and ui_label_high_score:
+		var high_score = save_mgr.get_high_score()
+		ui_label_high_score.text = "Best: %d" % high_score
 
 
 ## 暂停所有水果（游戏结束时）

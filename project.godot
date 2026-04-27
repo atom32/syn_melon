@@ -23,6 +23,7 @@ SaveManager="res://autoload/SaveManager.gd"
 ComboManager="res://autoload/ComboManager.gd"
 EventBus="res://autoload/EventBus.gd"
 SceneManager="res://autoload/SceneManager.gd"
+DataManager="res://autoload/DataManager.gd"
 
 [display]
 

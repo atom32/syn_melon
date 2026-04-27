@@ -37,6 +37,7 @@ func _setup_fade_overlay() -> void:
 	_fade_canvas = CanvasLayer.new()
 	_fade_canvas.layer = 128  # 最高层级
 	_fade_canvas.name = "FadeCanvas"
+	_fade_canvas.visible = false  # 初始隐藏，避免阻挡鼠标事件
 	get_tree().root.add_child(_fade_canvas)
 
 	# 创建全屏 ColorRect
@@ -59,6 +60,11 @@ func change_scene(scene_path: String) -> void:
 
 	# 确保覆盖层已创建
 	_ensure_fade_overlay_created()
+
+	# 显示覆盖层（确保可见性）
+	_fade_canvas.visible = true
+	_fade_rect.visible = true
+	_fade_rect.color = Color(0, 0, 0, 0)  # 从透明开始
 
 	# 创建 Tween
 	_tween = create_tween()
@@ -105,6 +111,12 @@ func on_scene_loaded() -> void:
 func _on_transition_complete() -> void:
 	_is_transitioning = false
 	print("[SceneManager] 场景切换完成")
+
+	# 隐藏覆盖层，避免阻挡鼠标事件
+	if _fade_canvas:
+		_fade_canvas.visible = false
+	if _fade_rect:
+		_fade_rect.visible = false
 
 
 ## 立即切换场景（无淡入淡出，用于测试）
