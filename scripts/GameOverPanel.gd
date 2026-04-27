@@ -136,7 +136,7 @@ func _on_restart_pressed() -> void:
 
 	var scene_mgr = get_node("/root/SceneManager")
 	if scene_mgr:
-		scene_mgr.change_scene("res://scenes/Main.tscn")
+		scene_mgr.change_scene("res://scenes/MainGame.tscn")
 		print("[GameOverPanel] SceneManager 调用完成")
 	else:
 		print("[GameOverPanel] 错误：找不到 SceneManager")

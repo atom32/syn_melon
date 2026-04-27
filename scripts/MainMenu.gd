@@ -28,7 +28,7 @@ func _ready() -> void:
 func _on_start_button() -> void:
 	print("[MainMenu] 点击开始游戏")
 	var scene_mgr = get_node("/root/SceneManager")
-	scene_mgr.change_scene("res://scenes/Main.tscn")
+	scene_mgr.change_scene("res://scenes/MainGame.tscn")
 
 
 ## 退出游戏按钮回调

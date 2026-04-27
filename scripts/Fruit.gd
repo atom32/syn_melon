@@ -285,6 +285,9 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 
 	get_parent().add_child(new_fruit)
 
+	# 通过 EventBus 通知所有系统新水果已生成
+	event_bus.emit_fruit_spawned(new_fruit, new_fruit.level)
+
 	# 删除旧水果
 	call_deferred("queue_free")
 	other_fruit.call_deferred("queue_free")
