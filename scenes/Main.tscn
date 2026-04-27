@@ -26,12 +26,12 @@ wait_time = 0.5
 one_shot = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1987654321]
-position = Vector2(573, 428)
+position = Vector2(305, 427)
 script = ExtResource("id_cameramgr")
 
 [node name="UIBackground" type="ColorRect" parent="." unique_id=2066795314]
-offset_left = 627.0
-offset_right = 1149.0
+offset_left = 561.0
+offset_right = 1083.0
 offset_bottom = 725.0
 color = Color(0.1, 0.1, 0.15, 1)
 metadata/_edit_use_anchors_ = true
@@ -85,7 +85,7 @@ text = "快速失败 (测试)"
 metadata/_edit_use_anchors_ = true
 
 [node name="WarningLine" type="Area2D" parent="." unique_id=128082908]
-position = Vector2(574, 200)
+position = Vector2(508, 200)
 script = ExtResource("2_warning")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WarningLine" unique_id=1575481702]
@@ -93,7 +93,7 @@ position = Vector2(-218, 0)
 shape = SubResource("RectangleShape2D_warning")
 
 [node name="Ceiling" type="StaticBody2D" parent="." unique_id=1487805239]
-position = Vector2(575, 75)
+position = Vector2(509, 75)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling" unique_id=1303117551]
@@ -101,7 +101,7 @@ position = Vector2(-239.5, -23)
 shape = SubResource("RectangleShape2D_ceiling")
 
 [node name="LeftWall" type="StaticBody2D" parent="." unique_id=600135904]
-position = Vector2(0, 450)
+position = Vector2(-66, 450)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=1650827705]
@@ -109,7 +109,7 @@ position = Vector2(48, 20)
 shape = SubResource("RectangleShape2D_wall")
 
 [node name="RightWall" type="StaticBody2D" parent="." unique_id=1829616924]
-position = Vector2(1150, 450)
+position = Vector2(1084, 450)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=1092074336]
@@ -117,7 +117,7 @@ position = Vector2(-499, 15.125)
 shape = SubResource("RectangleShape2D_wall")
 
 [node name="BackGround" type="StaticBody2D" parent="." unique_id=198111269]
-position = Vector2(575, 750)
+position = Vector2(509, 750)
 collision_mask = 0
 
 [node name="ColorRect" type="ColorRect" parent="BackGround" unique_id=670147821]
@@ -134,9 +134,9 @@ shape = SubResource("RectangleShape2D_ground")
 
 [node name="ComboDisplay" parent="." unique_id=568849209 instance=ExtResource("id_8k3mr")]
 anchors_preset = 5
-offset_left = 727.0
+offset_left = 661.0
 offset_top = 400.0
-offset_right = 1027.0
+offset_right = 961.0
 offset_bottom = 500.0
 grow_vertical = 1
 metadata/_edit_use_anchors_ = true
@@ -148,9 +148,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 677.0
+offset_left = 611.0
 offset_top = 250.0
-offset_right = 1077.0
+offset_right = 1011.0
 offset_bottom = 550.0
 grow_horizontal = 2
 grow_vertical = 2
