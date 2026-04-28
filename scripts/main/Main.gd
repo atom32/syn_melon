@@ -188,14 +188,13 @@ func _on_mouse_pressed(x_position: float) -> void:
 		print("Main.gd: 已有预览水果")
 		return
 
-	# 创建预览水果
+	# 创建预览水果（传递 self 作为 parent）
 	var gm = get_node_or_null("/root/GameManager")
 	if not gm:
 		push_error("Main.gd: GameManager 未找到")
 		return
 
-	_preview_fruit = gm.spawn_fruit(Vector2(0, SPAWN_Y))
-	add_child(_preview_fruit)
+	_preview_fruit = gm.spawn_fruit(Vector2(0, SPAWN_Y), self)
 
 	# 冻结物理（不受重力影响）
 	_preview_fruit.freeze = true

@@ -116,10 +116,9 @@ func _on_mouse_pressed(x_position: float) -> void:
 	if _preview_fruit and is_instance_valid(_preview_fruit):
 		return
 
-	# 创建预览水果
+	# 创建预览水果（传递 self 作为 parent）
 	var gm = get_node("/root/GameManager")
-	_preview_fruit = gm.spawn_fruit(Vector2(0, SPAWN_Y))
-	add_child(_preview_fruit)
+	_preview_fruit = gm.spawn_fruit(Vector2(0, SPAWN_Y), self)
 
 	_preview_fruit.freeze = true
 
