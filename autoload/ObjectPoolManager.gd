@@ -149,7 +149,8 @@ func _get_pool_type_for_data(pool_data: Dictionary) -> String:
 ## 初始化对象
 func _init_object(obj: Node, args: Array) -> void:
 	if obj.has_method("on_spawn"):
-		obj.callv("on_spawn", args)
+		# 将 args 包装成单个参数传递，因为 on_spawn 定义为 on_spawn(args: Array)
+		obj.callv("on_spawn", [args])
 
 
 ## 返回对象到池
