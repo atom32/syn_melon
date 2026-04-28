@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://cct8asucihcnt"]
+
+[ext_resource type="Script" uid="uid://c60a6j32dgam3" path="res://scripts/main/BattleArea.gd" id="1_battlearea"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(50, 767.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hwall"]
+size = Vector2(523, 50)
+
+[node name="BattleArea" type="Node2D" unique_id=1097222553]
+script = ExtResource("1_battlearea")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=720740966]
+position = Vector2(287, 425)
+
+[node name="LeftWall" type="StaticBody2D" parent="." unique_id=685527518]
+position = Vector2(0, 425)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=250822249]
+position = Vector2(48, 0)
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="RightWall" type="StaticBody2D" parent="." unique_id=2074726727]
+position = Vector2(575, 425)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=1890291840]
+position = Vector2(-499, 0)
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="TopWall" type="StaticBody2D" parent="." unique_id=1669706944]
+position = Vector2(287, 50)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopWall" unique_id=1795802723]
+position = Vector2(-240, 0)
+shape = SubResource("RectangleShape2D_hwall")
+
+[node name="BottomWall" type="StaticBody2D" parent="." unique_id=1651349456]
+position = Vector2(287, 800)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomWall" unique_id=1328808088]
+position = Vector2(-240, 0)
+shape = SubResource("RectangleShape2D_hwall")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1243749571]
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 525.0
+offset_bottom = 800.0
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="GridLines" type="Node2D" parent="." unique_id=563851550]
+position = Vector2(50, 50)
+
+[node name="HLine1" type="ColorRect" parent="GridLines" unique_id=2016518505]
+offset_top = 187.5
+offset_right = 475.0
+offset_bottom = 190.0
+color = Color(0.2, 0.2, 0.25, 0.5)
+
+[node name="HLine2" type="ColorRect" parent="GridLines" unique_id=672947462]
+offset_top = 375.0
+offset_right = 475.0
+offset_bottom = 377.5
+color = Color(0.2, 0.2, 0.25, 0.5)
+
+[node name="HLine3" type="ColorRect" parent="GridLines" unique_id=406855848]
+offset_top = 562.5
+offset_right = 475.0
+offset_bottom = 565.0
+color = Color(0.2, 0.2, 0.25, 0.5)
+
+[node name="VLine1" type="ColorRect" parent="GridLines" unique_id=88572692]
+offset_left = 158.3
+offset_right = 161.3
+offset_bottom = 750.0
+color = Color(0.2, 0.2, 0.25, 0.5)
+
+[node name="VLine2" type="ColorRect" parent="GridLines" unique_id=34825968]
+offset_left = 316.6
+offset_right = 319.6
+offset_bottom = 750.0
+color = Color(0.2, 0.2, 0.25, 0.5)
+
+[node name="DeployZones" type="Node2D" parent="." unique_id=931554299]
+
+[node name="FrontLine" type="ColorRect" parent="DeployZones" unique_id=1725835374]
+offset_top = 600.0
+offset_right = 575.0
+offset_bottom = 750.0
+color = Color(0.3, 0.5, 0.3, 0.1)
+
+[node name="MidLine" type="ColorRect" parent="DeployZones" unique_id=312216691]
+offset_top = 400.0
+offset_right = 575.0
+offset_bottom = 600.0
+color = Color(0.4, 0.4, 0.3, 0.1)
+
+[node name="BackLine" type="ColorRect" parent="DeployZones" unique_id=1301026708]
+offset_top = 100.0
+offset_right = 575.0
+offset_bottom = 400.0
+color = Color(0.5, 0.3, 0.3, 0.1)
+
+[node name="HintLabel" type="Label" parent="." unique_id=290935476]
+offset_left = -200.0
+offset_top = -25.0
+offset_right = 200.0
+offset_bottom = 25.0
+theme_override_font_sizes/font_size = 24
+text = "战斗区域"
+horizontal_alignment = 1
+vertical_alignment = 1

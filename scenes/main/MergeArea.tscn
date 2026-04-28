@@ -1,0 +1,83 @@
+[gd_scene load_steps=4 format=3 uid="uid://mergearea_root"]
+
+[ext_resource type="Script" path="res://scripts/main/MergeArea.gd" id="1_mergearea"]
+[ext_resource type="PackedScene" uid="uid://bcr7gdyjfv4xl" path="res://scenes/ComboDisplay.tscn" id="2_combo"]
+[ext_resource type="Script" uid="uid://bt4keo5ieqr5t" path="res://scripts/systems/WarningLine.gd" id="3_warning"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_warning"]
+size = Vector2(480, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ceiling"]
+size = Vector2(521, 96)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(50, 767.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(523, 116)
+
+[node name="MergeArea" type="Node2D"]
+script = ExtResource("1_mergearea")
+
+[node name="CooldownTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(287, 428)
+enabled = true
+
+[node name="WarningLine" type="Area2D" parent="."]
+position = Vector2(287, 200)
+script = ExtResource("3_warning")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WarningLine"]
+position = Vector2(-218, 0)
+shape = SubResource("RectangleShape2D_warning")
+
+[node name="Ceiling" type="StaticBody2D" parent="."]
+position = Vector2(287, 75)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling"]
+position = Vector2(-239.5, -23)
+shape = SubResource("RectangleShape2D_ceiling")
+
+[node name="LeftWall" type="StaticBody2D" parent="."]
+position = Vector2(0, 450)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+position = Vector2(48, 20)
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="RightWall" type="StaticBody2D" parent="."]
+position = Vector2(575, 450)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
+position = Vector2(-499, 15.125)
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="BackGround" type="StaticBody2D" parent="."]
+position = Vector2(287, 750)
+collision_mask = 0
+
+[node name="ColorRect" type="ColorRect" parent="BackGround"]
+offset_left = -503.0
+offset_top = -671.0
+offset_right = 51.0
+offset_bottom = -24.0
+color = Color(0.15, 0.15, 0.2, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BackGround"]
+position = Vector2(-238.5, 33)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="ComboDisplay" parent="." instance=ExtResource("2_combo")]
+anchors_preset = 5
+offset_left = 127.0
+offset_top = 400.0
+offset_right = 427.0
+offset_bottom = 500.0
+grow_vertical = 1

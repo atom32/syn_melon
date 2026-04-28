@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://bfucvovypyv2m"]
+
+[ext_resource type="Script" path="res://scripts/core/Fruit.gd" id="2_h8k9m"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xobih"]
+radius = 25.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_detector"]
+radius = 25.0
+
+
+[node name="RigidBody2D" type="RigidBody2D"]
+script = ExtResource("2_h8k9m")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_xobih")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="DetectorArea" type="Area2D" parent="."]
+
+[node name="DetectorShape" type="CollisionShape2D" parent="DetectorArea"]
+shape = SubResource("CircleShape2D_detector")

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://mega_explosion"]
-
-[ext_resource type="Script" path="res://scripts/MegaExplosionEffect.gd" id="1_mega"]
-
-[node name="MegaExplosionEffect" type="Node2D"]
-script = ExtResource("1_mega")
