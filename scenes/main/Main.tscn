@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://cedynbx43mrlb"]
 
-[ext_resource type="Script" uid="uid://bt4keo5ieqr5t" path="res://scripts/main/Main.gd" id="1_main"]
-[ext_resource type="Script" uid="uid://cfbgg7fdoqfb2" path="res://scripts/systems/WarningLine.gd" id="2_warning"]
-[ext_resource type="Script" uid="uid://cyql8n62fkvnm" path="res://scripts/ui/GameOverPanel.gd" id="3_gameover"]
-[ext_resource type="PackedScene" uid="uid://bcr7gdyjfv4xl" path="res://scenes/ComboDisplay.tscn" id="id_8k3mr"]
-[ext_resource type="Script" uid="uid://bcmst0gip47vi" path="res://scripts/systems/CameraManager.gd" id="id_cameramgr"]
+[ext_resource type="Script" uid="uid://pey3fjvelbm3" path="res://scripts/main/Main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://d4meucpamwpd6" path="res://scripts/systems/WarningLine.gd" id="2_warning"]
+[ext_resource type="Script" uid="uid://ca3nqukloncrs" path="res://scripts/ui/GameOverPanel.gd" id="3_gameover"]
+[ext_resource type="PackedScene" uid="uid://bcr7gdyjfv4xl" path="res://scenes/ui/ComboDisplay.tscn" id="id_8k3mr"]
+[ext_resource type="Script" uid="uid://2i3vjrel46h1" path="res://scripts/systems/CameraManager.gd" id="id_cameramgr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_warning"]
 size = Vector2(664, 30)
@@ -26,13 +26,14 @@ wait_time = 0.5
 one_shot = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1987654321]
-position = Vector2(305, 427)
+position = Vector2(272, 352)
 script = ExtResource("id_cameramgr")
 
 [node name="UIBackground" type="ColorRect" parent="." unique_id=2066795314]
-offset_left = 561.0
-offset_right = 1083.0
-offset_bottom = 725.0
+offset_left = 16.0
+offset_top = -49.0
+offset_right = 538.0
+offset_bottom = 676.0
 color = Color(0.1, 0.1, 0.15, 1)
 metadata/_edit_use_anchors_ = true
 
@@ -67,7 +68,11 @@ text = "Best: 0"
 metadata/_edit_use_anchors_ = true
 
 [node name="PreviewContainer" type="Control" parent="UIBackground" unique_id=1822015116]
-anchors_preset = 0
+layout_mode = 1
+anchor_left = -0.12452107
+anchor_top = -0.031724136
+anchor_right = -0.12452107
+anchor_bottom = -0.031724136
 offset_left = 201.0
 offset_top = -26.0
 offset_right = 461.0
@@ -75,7 +80,12 @@ offset_bottom = 244.0
 metadata/_edit_use_anchors_ = true
 
 [node name="DebugFailButton" type="Button" parent="UIBackground" unique_id=1958018258]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.7318008
+anchor_top = -0.030344827
+anchor_right = 0.7318008
+anchor_bottom = -0.030344827
 offset_left = 10.0
 offset_top = 124.0
 offset_right = 140.0
@@ -134,10 +144,10 @@ shape = SubResource("RectangleShape2D_ground")
 
 [node name="ComboDisplay" parent="." unique_id=568849209 instance=ExtResource("id_8k3mr")]
 anchors_preset = 5
-offset_left = 661.0
-offset_top = 400.0
-offset_right = 961.0
-offset_bottom = 500.0
+offset_left = 264.0
+offset_top = -34.0
+offset_right = 564.0
+offset_bottom = 66.0
 grow_vertical = 1
 metadata/_edit_use_anchors_ = true
 

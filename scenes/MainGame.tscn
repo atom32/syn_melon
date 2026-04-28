@@ -1,9 +1,9 @@
-[gd_scene format=3 uid="uid://c5orr4dw7gejb"]
+[gd_scene format=3 uid="uid://claqe53orfhsf"]
 
-[ext_resource type="Script" uid="uid://byssg7a5t4jn7" path="res://scripts/main/MainGame.gd" id="1_maingame"]
-[ext_resource type="Script" uid="uid://b41hbdt7skttn" path="res://scripts/systems/CrossScreenDragManager.gd" id="2_drag"]
+[ext_resource type="Script" path="res://scripts/MainGame.gd" id="1_maingame"]
+[ext_resource type="Script" path="res://scripts/CrossScreenDragManager.gd" id="2_drag"]
 
-[node name="MainGame" type="Control" unique_id=1101320746]
+[node name="MainGame" type="Control" unique_id=1246187912]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_maingame")
 
-[node name="ScreenContainer" type="HBoxContainer" parent="." unique_id=2065745041]
+[node name="ScreenContainer" type="HBoxContainer" parent="." unique_id=2091512802]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,39 +23,39 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-[node name="LeftPanel" type="PanelContainer" parent="ScreenContainer" unique_id=888987901]
+[node name="LeftPanel" type="PanelContainer" parent="ScreenContainer" unique_id=241953598]
 custom_minimum_size = Vector2(575, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="LeftViewportContainer" type="SubViewportContainer" parent="ScreenContainer/LeftPanel" unique_id=558934268]
+[node name="LeftViewportContainer" type="SubViewportContainer" parent="ScreenContainer/LeftPanel" unique_id=515408276]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="LeftViewport" type="SubViewport" parent="ScreenContainer/LeftPanel/LeftViewportContainer" unique_id=1495763092]
+[node name="LeftViewport" type="SubViewport" parent="ScreenContainer/LeftPanel/LeftViewportContainer" unique_id=1987174514]
 handle_input_locally = false
 size = Vector2i(575, 850)
 render_target_update_mode = 4
 
-[node name="RightPanel" type="PanelContainer" parent="ScreenContainer" unique_id=459047978]
+[node name="RightPanel" type="PanelContainer" parent="ScreenContainer" unique_id=385233265]
 custom_minimum_size = Vector2(575, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RightViewportContainer" type="SubViewportContainer" parent="ScreenContainer/RightPanel" unique_id=180593213]
+[node name="RightViewportContainer" type="SubViewportContainer" parent="ScreenContainer/RightPanel" unique_id=2093662262]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RightViewport" type="SubViewport" parent="ScreenContainer/RightPanel/RightViewportContainer" unique_id=130374575]
+[node name="RightViewport" type="SubViewport" parent="ScreenContainer/RightPanel/RightViewportContainer" unique_id=349680011]
 handle_input_locally = false
 size = Vector2i(575, 850)
 render_target_update_mode = 4
 
-[node name="TopBar" type="PanelContainer" parent="." unique_id=1326484000]
+[node name="TopBar" type="PanelContainer" parent="." unique_id=896502115]
 z_index = 100
 layout_mode = 1
 anchors_preset = 10
@@ -63,31 +63,31 @@ anchor_right = 1.0
 offset_bottom = 60.0
 grow_horizontal = 2
 
-[node name="TopBarContent" type="HBoxContainer" parent="TopBar" unique_id=2085671241]
+[node name="TopBarContent" type="HBoxContainer" parent="TopBar" unique_id=406661230]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="FactionLabel" type="Label" parent="TopBar/TopBarContent" unique_id=1044898403]
+[node name="FactionLabel" type="Label" parent="TopBar/TopBarContent" unique_id=812568840]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "阵营: 深渊"
 vertical_alignment = 1
 
-[node name="Spacer1" type="Control" parent="TopBar/TopBarContent" unique_id=1728366903]
+[node name="Spacer1" type="Control" parent="TopBar/TopBarContent" unique_id=1028311894]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ScoreLabel" type="Label" parent="TopBar/TopBarContent" unique_id=1008681804]
+[node name="ScoreLabel" type="Label" parent="TopBar/TopBarContent" unique_id=1174958303]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "分数: 0"
 vertical_alignment = 1
 
-[node name="Spacer2" type="Control" parent="TopBar/TopBarContent" unique_id=1134840819]
+[node name="Spacer2" type="Control" parent="TopBar/TopBarContent" unique_id=1627083328]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="TimerLabel" type="Label" parent="TopBar/TopBarContent" unique_id=327345926]
+[node name="TimerLabel" type="Label" parent="TopBar/TopBarContent" unique_id=122075890]
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.8, 0.3, 1)
@@ -95,7 +95,7 @@ theme_override_font_sizes/font_size = 28
 text = "90"
 vertical_alignment = 1
 
-[node name="BottomBar" type="PanelContainer" parent="." unique_id=1216912393]
+[node name="BottomBar" type="PanelContainer" parent="." unique_id=88210640]
 z_index = 100
 layout_mode = 1
 anchors_preset = 12
@@ -106,28 +106,28 @@ offset_top = -50.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="BottomBarContent" type="HBoxContainer" parent="BottomBar" unique_id=1859688767]
+[node name="BottomBarContent" type="HBoxContainer" parent="BottomBar" unique_id=555986870]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="ResourcesLabel" type="Label" parent="BottomBar/BottomBarContent" unique_id=1263144609]
+[node name="ResourcesLabel" type="Label" parent="BottomBar/BottomBarContent" unique_id=2100852748]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "资源: 100"
 vertical_alignment = 1
 
-[node name="Spacer" type="Control" parent="BottomBar/BottomBarContent" unique_id=699675660]
+[node name="Spacer" type="Control" parent="BottomBar/BottomBarContent" unique_id=1632773596]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HintLabel" type="Label" parent="BottomBar/BottomBarContent" unique_id=243675827]
+[node name="HintLabel" type="Label" parent="BottomBar/BottomBarContent" unique_id=1438404954]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
 theme_override_font_sizes/font_size = 16
 text = "拖拽左侧单位到右侧战场部署"
 vertical_alignment = 1
 
-[node name="DragOverlay" type="Control" parent="." unique_id=1240094281]
+[node name="DragOverlay" type="Control" parent="." unique_id=2143068165]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

@@ -32,7 +32,7 @@ var _preview_fruit: Fruit = null
 var _ui_preview_fruit: Fruit = null
 
 # 水果场景引用
-var _fruit_scene: PackedScene = preload("res://scenes/Fruit.tscn")
+var _fruit_scene: PackedScene = preload("res://scenes/main/Fruit.tscn")
 
 # 是否可以发射
 var _can_spawn: bool = true

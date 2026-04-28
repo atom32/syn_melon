@@ -18,7 +18,7 @@ var next_fruit_level: int = 0     # 下一个水果等级
 var score: int = 0                 # 当前分数
 
 # 水果场景引用
-var _fruit_scene: PackedScene = preload("res://scenes/Fruit.tscn")
+var _fruit_scene: PackedScene = preload("res://scenes/main/Fruit.tscn")
 
 
 func _ready() -> void:

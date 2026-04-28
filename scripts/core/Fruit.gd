@@ -24,7 +24,7 @@ var _spawn_cooldown: float = 0.0
 const SPAWN_COOLDOWN_TIME: float = 0.1
 
 # 水果场景引用
-var _fruit_scene: PackedScene = preload("res://scenes/Fruit.tscn")
+var _fruit_scene: PackedScene = preload("res://scenes/main/Fruit.tscn")
 
 # 水果等级 (0-10)
 @export var level: int = 0:

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bqit8ut7ch4n7"]
 
-[ext_resource type="Script" uid="uid://c8use76ds3ea2" path="res://scripts/main/MainMenu.gd" id="1_menu"]
+[ext_resource type="Script" uid="uid://rq0l6tina111" path="res://scripts/main/MainMenu.gd" id="1_qi05h"]
 
 [node name="MainMenu" type="Control" unique_id=2055388922]
 layout_mode = 3
@@ -9,7 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_menu")
+script = ExtResource("1_qi05h")
 
 [node name="Background" type="ColorRect" parent="." unique_id=287273650]
 layout_mode = 1
