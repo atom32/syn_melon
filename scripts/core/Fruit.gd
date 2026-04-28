@@ -81,14 +81,8 @@ func _ready() -> void:
 	var random_angular_velocity = randf_range(-5.0, 5.0)
 	angular_velocity = deg_to_rad(random_angular_velocity)
 
-	# 延迟连接碰撞音效信号，避免在对象未完全准备好时触发
-	call_deferred("connect_sound_signal")
-
-
-## 延迟连接碰撞音效信号
-func connect_sound_signal() -> void:
-	if not body_entered.is_connected(_on_collision_sound):
-		body_entered.connect(_on_collision_sound)
+	# 注意：不在 _ready 中连接碰撞音效信号
+	# 信号连接在 on_spawn 中处理（支持对象复用）
 
 
 func _input(event: InputEvent) -> void:
@@ -311,8 +305,13 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 func _on_collision_sound(body: Node) -> void:
 	# 只在冷却结束后才播放碰撞音效（避免合成时也播放）
 	if _spawn_cooldown <= 0:
+		# 确保在场景树中才能访问绝对路径
+		if not is_inside_tree():
+			return
+
 		var audio = get_node("/root/AudioManager")
-		audio.play_collision(level)
+		if audio:
+			audio.play_collision(level)
 
 
 ## 清理合成标记
@@ -434,6 +433,10 @@ func on_spawn(args: Array = []) -> void:
 	if not is_in_group("fruits"):
 		add_to_group("fruits")
 
+	# 连接碰撞音效信号（对象复用时需要重新连接）
+	if not body_entered.is_connected(_on_collision_sound):
+		body_entered.connect(_on_collision_sound)
+
 	print("[Fruit] Spawn complete - level: ", level, " pos: ", global_position)
 
 
@@ -448,6 +451,10 @@ func on_despawn() -> void:
 	# 从父节点移除
 	if get_parent():
 		get_parent().remove_child(self)
+
+	# 断开碰撞音效信号（避免信号堆积）
+	if body_entered.is_connected(_on_collision_sound):
+		body_entered.disconnect(_on_collision_sound)
 
 	# 重置状态
 	_is_merging = false
