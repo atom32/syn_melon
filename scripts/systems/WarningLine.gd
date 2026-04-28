@@ -199,8 +199,7 @@ func _trigger_game_over(fruit: Fruit) -> void:
 	print("=" .repeat(50))
 
 	# 发射游戏结束事件到 EventBus
+	# Main.gd 会处理水果暂停和 UI 显示
+	# 不要暂停场景树，否则 UI 无法接收输入
 	var event_bus = get_node("/root/EventBus")
 	event_bus.emit_game_over()
-
-	# 暂停游戏（由 Main.gd 处理面板显示）
-	get_tree().paused = true
