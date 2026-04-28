@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cedynbx43mrlb"]
 
-[ext_resource type="Script" uid="uid://pey3fjvelbm3" path="res://scripts/main/Main.gd" id="1_main"]
-[ext_resource type="Script" uid="uid://d4meucpamwpd6" path="res://scripts/systems/WarningLine.gd" id="2_warning"]
+[ext_resource type="Script" uid="uid://b8j3x7gji15y4" path="res://scripts/main/Main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://ckx2pja1vo74u" path="res://scripts/systems/WarningLine.gd" id="2_warning"]
 [ext_resource type="Script" uid="uid://ca3nqukloncrs" path="res://scripts/ui/GameOverPanel.gd" id="3_gameover"]
 [ext_resource type="PackedScene" uid="uid://bcr7gdyjfv4xl" path="res://scenes/ui/ComboDisplay.tscn" id="id_8k3mr"]
 [ext_resource type="Script" uid="uid://2i3vjrel46h1" path="res://scripts/systems/CameraManager.gd" id="id_cameramgr"]
@@ -26,7 +26,7 @@ wait_time = 0.5
 one_shot = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1987654321]
-position = Vector2(272, 352)
+position = Vector2(272, 360)
 script = ExtResource("id_cameramgr")
 
 [node name="UIBackground" type="ColorRect" parent="." unique_id=2066795314]
@@ -69,10 +69,10 @@ metadata/_edit_use_anchors_ = true
 
 [node name="PreviewContainer" type="Control" parent="UIBackground" unique_id=1822015116]
 layout_mode = 1
-anchor_left = -0.12452107
-anchor_top = -0.031724136
-anchor_right = -0.12452107
-anchor_bottom = -0.031724136
+anchor_left = -0.14750957
+anchor_top = -0.030344827
+anchor_right = -0.14750957
+anchor_bottom = -0.030344827
 offset_left = 201.0
 offset_top = -26.0
 offset_right = 461.0
