@@ -258,8 +258,8 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 		audio.play_mega_merge()
 
 		# 删除旧水果（不生成新水果）
-		call_deferred("queue_free")
-		other_fruit.call_deferred("queue_free")
+		call_deferred("return_to_pool")
+		other_fruit.call_deferred("return_to_pool")
 		call_deferred("_cleanup_merge", merge_key)
 
 		print("🎉 大西瓜合成！不生成新水果")
@@ -278,19 +278,26 @@ func _merge_fruits(other_fruit: Fruit, merge_key: String) -> void:
 	# 播放合成音效
 	audio.play_merge(level)
 
-	# 创建新的水果
-	var new_fruit: Fruit = _fruit_scene.instantiate()
-	new_fruit.level = level + 1
-	new_fruit.global_position = spawn_position
-
-	get_parent().add_child(new_fruit)
+	# 创建新的水果（尝试使用对象池）
+	var new_fruit: Fruit
+	var pool_mgr = get_node("/root/ObjectPoolManager")
+	if pool_mgr and pool_mgr._pools.has("fruit"):
+		# 从池中创建
+		new_fruit = pool_mgr.spawn("fruit", [level + 1, spawn_position, get_parent()])
+		print("[Fruit] 从池中创建新水果，等级: ", level + 1)
+	else:
+		# 直接实例化
+		new_fruit = _fruit_scene.instantiate()
+		new_fruit.level = level + 1
+		new_fruit.global_position = spawn_position
+		get_parent().add_child(new_fruit)
 
 	# 通过 EventBus 通知所有系统新水果已生成
 	event_bus.emit_fruit_spawned(new_fruit, new_fruit.level)
 
 	# 删除旧水果
-	call_deferred("queue_free")
-	other_fruit.call_deferred("queue_free")
+	call_deferred("return_to_pool")
+	other_fruit.call_deferred("return_to_pool")
 	call_deferred("_cleanup_merge", merge_key)
 
 
@@ -379,3 +386,82 @@ func _process(delta: float) -> void:
 		var clamped_y = clamp(mouse_pos.y, y_min, y_max)
 
 		global_position = Vector2(clamped_x, clamped_y)
+
+
+## ==========================================
+## 对象池接口
+## ==========================================
+
+## 从池中生成时调用
+## args: [level: int, position: Vector2, parent: Node]
+func on_spawn(args: Array = []) -> void:
+	print("[Fruit] on_spawn - args: ", args)
+
+	# 参数：level, position, parent
+	if args.size() >= 1:
+		level = args[0]
+	if args.size() >= 2:
+		global_position = args[1]
+	if args.size() >= 3 and args[2]:
+		args[2].add_child(self)
+
+	# 重置状态
+	_spawn_cooldown = SPAWN_COOLDOWN_TIME
+	_is_merging = false
+	_is_being_dragged = false
+
+	# 确保可见
+	visible = true
+
+	# 确保物理未冻结
+	freeze = false
+
+	# 重置物理速度
+	linear_velocity = Vector2.ZERO
+	angular_velocity = 0.0
+
+	# 重置碰撞层
+	collision_layer = 1
+	collision_mask = 1
+
+	# 添加到水果组（_ready 中已添加，但确保在）
+	if not is_in_group("fruits"):
+		add_to_group("fruits")
+
+	print("[Fruit] Spawn complete - level: ", level, " pos: ", global_position)
+
+
+## 归还到池时调用
+func on_despawn() -> void:
+	print("[Fruit] on_despawn - level: ", level)
+
+	# 从水果组移除
+	if is_in_group("fruits"):
+		remove_from_group("fruits")
+
+	# 从父节点移除
+	if get_parent():
+		get_parent().remove_child(self)
+
+	# 重置状态
+	_is_merging = false
+	_is_being_dragged = false
+	level = 0
+
+	# 停止所有运动
+	linear_velocity = Vector2.ZERO
+	angular_velocity = 0.0
+
+	print("[Fruit] Despawn complete")
+
+
+## 快捷方法：返回到池或删除
+func return_to_pool() -> void:
+	if has_meta("pooled"):
+		var pool_mgr = get_node("/root/ObjectPoolManager")
+		if pool_mgr:
+			pool_mgr.despawn(self)
+			return
+
+	# 非池化对象，直接删除
+	queue_free()

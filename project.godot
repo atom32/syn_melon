@@ -24,6 +24,7 @@ ComboManager="res://autoload/ComboManager.gd"
 EventBus="res://autoload/EventBus.gd"
 SceneManager="res://autoload/SceneManager.gd"
 DataManager="res://autoload/DataManager.gd"
+ObjectPoolManager="res://autoload/ObjectPoolManager.gd"
 
 [display]
 

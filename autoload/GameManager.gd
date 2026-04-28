@@ -22,6 +22,9 @@ var _fruit_scene: PackedScene = preload("res://scenes/main/Fruit.tscn")
 
 
 func _ready() -> void:
+	# 初始化对象池
+	_init_object_pool()
+
 	# 初始化水果
 	_randomize_next_fruit()
 	current_fruit_level = next_fruit_level
@@ -31,6 +34,18 @@ func _ready() -> void:
 	var event_bus = get_node("/root/EventBus")
 	event_bus.fruit_merged.connect(_on_fruit_merged)
 	event_bus.mega_fruit_merged.connect(_on_mega_fruit_merged)
+
+
+## 初始化对象池
+func _init_object_pool() -> void:
+	var pool_mgr = get_node_or_null("/root/ObjectPoolManager")
+	if not pool_mgr:
+		push_warning("[GameManager] ObjectPoolManager 不存在，跳过池初始化")
+		return
+
+	# 创建水果池，初始大小 20
+	pool_mgr.create_pool("fruit", _fruit_scene, 20)
+	print("[GameManager] 水果对象池初始化完成")
 
 
 ## 随机生成下一个水果（0-3级）
@@ -49,11 +64,23 @@ func get_next_fruit_level() -> int:
 
 
 ## 发射水果
-func spawn_fruit(spawn_position: Vector2):
-	# 创建水果
-	var fruit = _fruit_scene.instantiate()
-	fruit.level = current_fruit_level
-	fruit.global_position = spawn_position
+func spawn_fruit(spawn_position: Vector2, parent: Node = null):
+	var fruit: Fruit
+
+	# 尝试从对象池获取
+	var pool_mgr = get_node_or_null("/root/ObjectPoolManager")
+	if pool_mgr and pool_mgr._pools.has("fruit"):
+		# 从池中获取，传递参数：level, position, parent
+		fruit = pool_mgr.spawn("fruit", [current_fruit_level, spawn_position, parent])
+		print("[GameManager] 从对象池获取水果")
+	else:
+		# 回退：直接实例化
+		fruit = _fruit_scene.instantiate()
+		fruit.level = current_fruit_level
+		fruit.global_position = spawn_position
+		if parent:
+			parent.add_child(fruit)
+		print("[GameManager] 直接实例化水果")
 
 	# 发射水果生成事件到 EventBus
 	var event_bus = get_node("/root/EventBus")
