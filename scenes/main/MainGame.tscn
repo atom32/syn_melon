@@ -24,7 +24,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 0
 
 [node name="LeftPanel" type="PanelContainer" parent="ScreenContainer" unique_id=888987901]
-custom_minimum_size = Vector2(575, 0)
+custom_minimum_size = Vector2(640, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -36,11 +36,11 @@ size_flags_vertical = 3
 
 [node name="LeftViewport" type="SubViewport" parent="ScreenContainer/LeftPanel/LeftViewportContainer" unique_id=1495763092]
 handle_input_locally = false
-size = Vector2i(575, 850)
+size = Vector2i(640, 720)
 render_target_update_mode = 4
 
 [node name="RightPanel" type="PanelContainer" parent="ScreenContainer" unique_id=459047978]
-custom_minimum_size = Vector2(575, 0)
+custom_minimum_size = Vector2(640, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -52,7 +52,7 @@ size_flags_vertical = 3
 
 [node name="RightViewport" type="SubViewport" parent="ScreenContainer/RightPanel/RightViewportContainer" unique_id=130374575]
 handle_input_locally = false
-size = Vector2i(575, 850)
+size = Vector2i(640, 720)
 render_target_update_mode = 4
 
 [node name="TopBar" type="PanelContainer" parent="." unique_id=1326484000]
@@ -95,36 +95,27 @@ theme_override_font_sizes/font_size = 28
 text = "90"
 vertical_alignment = 1
 
-[node name="BottomBar" type="PanelContainer" parent="." unique_id=1216912393]
-z_index = 100
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -50.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="BottomBarContent" type="HBoxContainer" parent="BottomBar" unique_id=1859688767]
+[node name="Spacer3" type="Control" parent="TopBar/TopBarContent" unique_id=7310676]
 layout_mode = 2
-theme_override_constants/separation = 20
+size_flags_horizontal = 3
 
-[node name="ResourcesLabel" type="Label" parent="BottomBar/BottomBarContent" unique_id=1263144609]
+[node name="ResourcesLabel" type="Label" parent="TopBar/TopBarContent" unique_id=1263144609]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 1, 0.8, 1)
 theme_override_font_sizes/font_size = 20
 text = "资源: 100"
 vertical_alignment = 1
 
-[node name="Spacer" type="Control" parent="BottomBar/BottomBarContent" unique_id=699675660]
+[node name="Spacer4" type="Control" parent="TopBar/TopBarContent" unique_id=1780998770]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HintLabel" type="Label" parent="BottomBar/BottomBarContent" unique_id=243675827]
+[node name="HintLabel" type="Label" parent="TopBar/TopBarContent" unique_id=243675827]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
-theme_override_font_sizes/font_size = 16
-text = "拖拽左侧单位到右侧战场部署"
+theme_override_font_sizes/font_size = 14
+text = "拖拽左侧单位到右侧战场"
 vertical_alignment = 1
 
 [node name="DragOverlay" type="Control" parent="." unique_id=1240094281]

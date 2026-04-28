@@ -51,7 +51,7 @@ func _get_node_references() -> void:
 	faction_label = get_node_or_null("TopBar/TopBarContent/FactionLabel")
 	score_label = get_node_or_null("TopBar/TopBarContent/ScoreLabel")
 	timer_label = get_node_or_null("TopBar/TopBarContent/TimerLabel")
-	resources_label = get_node_or_null("BottomBar/BottomBarContent/ResourcesLabel")
+	resources_label = get_node_or_null("TopBar/TopBarContent/ResourcesLabel")
 
 	print("[MainGame] 节点引用获取完成")
 
@@ -203,12 +203,12 @@ func get_right_world_position(screen_pos: Vector2) -> Vector2:
 
 ## 区域检测
 func is_position_in_left_area(screen_pos: Vector2) -> bool:
-	var left_rect = Rect2(0, 0, 575, 850)
+	var left_rect = Rect2(0, 0, 640, 720)
 	return left_rect.has_point(screen_pos)
 
 
 func is_position_in_right_area(screen_pos: Vector2) -> bool:
-	var right_rect = Rect2(575, 0, 575, 850)
+	var right_rect = Rect2(640, 0, 640, 720)
 	return right_rect.has_point(screen_pos)
 
 
