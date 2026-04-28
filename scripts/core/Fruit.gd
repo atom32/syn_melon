@@ -81,8 +81,14 @@ func _ready() -> void:
 	var random_angular_velocity = randf_range(-5.0, 5.0)
 	angular_velocity = deg_to_rad(random_angular_velocity)
 
-	# 连接碰撞音效信号（落地时播放）
-	body_entered.connect(_on_collision_sound)
+	# 延迟连接碰撞音效信号，避免在对象未完全准备好时触发
+	call_deferred("connect_sound_signal")
+
+
+## 延迟连接碰撞音效信号
+func connect_sound_signal() -> void:
+	if not body_entered.is_connected(_on_collision_sound):
+		body_entered.connect(_on_collision_sound)
 
 
 func _input(event: InputEvent) -> void:
@@ -394,6 +400,7 @@ func _process(delta: float) -> void:
 
 ## 从池中生成时调用
 ## args: [level: int, position: Vector2, parent: Node]
+## 注意：对象已经被 ObjectPoolManager 添加到场景树
 func on_spawn(args: Array = []) -> void:
 	print("[Fruit] on_spawn - args: ", args)
 
@@ -402,8 +409,7 @@ func on_spawn(args: Array = []) -> void:
 		level = args[0]
 	if args.size() >= 2:
 		global_position = args[1]
-	if args.size() >= 3 and args[2]:
-		args[2].add_child(self)
+	# parent 已经由 ObjectPoolManager 处理了 add_child
 
 	# 重置状态
 	_spawn_cooldown = SPAWN_COOLDOWN_TIME

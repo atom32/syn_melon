@@ -43,7 +43,7 @@ func create_pool(pool_type: String, scene: PackedScene, initial_size: int) -> vo
 
 ## 从池中获取对象
 ## pool_type: 池类型
-## args: 传递给 on_spawn 的参数
+## args: 传递给 on_spawn 的参数 [level, position, parent]
 func spawn(pool_type: String, args: Array = []) -> Node:
 	if not _pools.has(pool_type):
 		push_error("[ObjectPoolManager] 池 '%s' 不存在" % pool_type)
@@ -52,18 +52,25 @@ func spawn(pool_type: String, args: Array = []) -> Node:
 	var pool_data = _pools[pool_type]
 
 	# 从可用列表获取
+	var obj: Node
 	if pool_data.available.is_empty():
 		if DEBUG:
 			print("[ObjectPoolManager] 警告：池 '%s' 为空，临时创建新对象" % pool_type)
-		var obj = _create_object(pool_data)
+		obj = _create_object(pool_data)
 		if not obj:
 			return null
-		_mark_in_use(pool_data, obj)
-		_init_object(obj, args)
-		return obj
+	else:
+		obj = pool_data.available.pop_back()
 
-	var obj = pool_data.available.pop_back()
+	# 标记为使用中
 	_mark_in_use(pool_data, obj)
+
+	# 重要：先添加到场景树，再调用 on_spawn
+	# 这样 on_spawn 中可以使用 get_node("/root/...") 等绝对路径
+	if args.size() >= 3 and args[2]:
+		args[2].add_child(obj)
+
+	# 初始化对象（此时已在场景树中）
 	_init_object(obj, args)
 
 	if DEBUG:
