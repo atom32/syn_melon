@@ -160,20 +160,31 @@ func _connect_eventbus_signals() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# 只处理鼠标左键
-	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT):
-		return
+	# 鼠标左键处理
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		# 检查是否在 UI 区域内
+		if event.position.y <= 100:
+			return
 
-	# 检查是否在 UI 区域内
-	if event.position.y <= 100:
-		return
+		# 按下鼠标：创建预览水果
+		if event.pressed:
+			_on_mouse_pressed(event.position.x)
+		# 松开鼠标：发射水果
+		else:
+			_on_mouse_released()
 
-	# 按下鼠标：创建预览水果
-	if event.pressed:
-		_on_mouse_pressed(event.position.x)
-	# 松开鼠标：发射水果
-	else:
-		_on_mouse_released()
+	# 触摸输入处理（移动端）
+	elif event is InputEventScreenTouch:
+		# 检查是否在 UI 区域内
+		if event.position.y <= 100:
+			return
+
+		# 触摸开始：创建预览水果
+		if event.pressed:
+			_on_touch_pressed(event.position, event.index)
+		# 触摸结束：发射水果
+		else:
+			_on_touch_released(event.index)
 
 
 ## 鼠标按下处理
@@ -356,3 +367,61 @@ func _pause_all_fruits() -> void:
 			paused_count += 1
 
 	print("[Main.gd] 已暂停 ", paused_count, " 个水果，游戏保持运行（UI仍可响应）")
+
+
+## ==========================================
+## 📱 触摸输入处理（移动端）
+## ==========================================
+
+## 触摸按下处理
+func _on_touch_pressed(touch_pos: Vector2, touch_index: int) -> void:
+	# 检查冷却状态
+	if not _can_spawn:
+		print("Main.gd: 冷却中，无法生成预览水果")
+		return
+
+	# 检查是否已有预览水果
+	if _preview_fruit and is_instance_valid(_preview_fruit):
+		print("Main.gd: 已有预览水果")
+		return
+
+	# 创建预览水果
+	var gm = get_node_or_null("/root/GameManager")
+	if not gm:
+		push_error("Main.gd: GameManager 未找到")
+		return
+
+	_preview_fruit = gm.spawn_fruit(Vector2(0, SPAWN_Y))
+	add_child(_preview_fruit)
+
+	# 冻结物理（不受重力影响）
+	_preview_fruit.freeze = true
+
+	# 设置初始位置
+	var clamped_x = clamp(touch_pos.x, X_MIN_LIMIT, X_MAX_LIMIT)
+	_preview_fruit.global_position = Vector2(clamped_x, SPAWN_Y)
+
+	print("Main.gd: 触摸创建预览水果等级 %d 在 x=%.0f (触摸点: %d)" % [_preview_fruit.level, clamped_x, touch_index])
+
+
+## 触摸松开处理
+func _on_touch_released(touch_index: int) -> void:
+	# 检查是否有预览水果
+	if not _preview_fruit or not is_instance_valid(_preview_fruit):
+		return
+
+	# 解冻物理
+	_preview_fruit.freeze = false
+
+	# 清空预览引用
+	_preview_fruit = null
+
+	# 开始冷却
+	_can_spawn = false
+	if cooldown_timer:
+		cooldown_timer.start()
+
+	# 更新 UI 显示下一个水果
+	_update_ui()
+
+	print("Main.gd: 触摸发射水果，开始冷却 (触摸点: %d)" % touch_index)

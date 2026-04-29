@@ -86,26 +86,52 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# 只处理鼠标右键
-	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT):
-		return
-
-	# 右键按下：检查是否是拖拽到战场
-	if event.pressed:
-		# 检查鼠标是否悬停在这个水果上
-		if _is_mouse_hovering():
-			# 请求拖拽到战场
-			drag_to_battle_requested.emit(self)
-			get_viewport().set_input_as_handled()
+	# 鼠标右键处理
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.pressed:
+			# 检查鼠标是否悬停在这个水果上
+			if _is_mouse_hovering():
+				# 请求拖拽到战场
+				drag_to_battle_requested.emit(self)
+				get_viewport().set_input_as_handled()
 
 	# 作弊功能：如果是作弊模式且继续拖动
 	if enable_cheat_drag:
-		if event.pressed:
-			if _is_mouse_hovering():
-				_start_dragging()
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed:
+				if _is_mouse_hovering():
+					_start_dragging()
+			else:
+				if _is_being_dragged:
+					_stop_dragging()
+
+	# 触摸输入处理（移动端长按拖拽到战场）
+	if event is InputEventScreenTouch:
+		if event.pressed and _is_touch_hovering(event.position, event.index):
+			# 标记触摸开始，长按后触发拖拽
+			_start_long_press_timer(event.index)
 		else:
-			if _is_being_dragged:
-				_stop_dragging()
+			_cancel_long_press_timer(event.index)
+
+
+## 检查触摸是否在水果上
+func _is_touch_hovering(touch_pos: Vector2, touch_index: int) -> bool:
+	var distance = global_position.distance_to(touch_pos)
+	var radius = FruitConfig.get_radius(level)
+	return distance <= radius
+
+
+## 长按计时器
+var _long_press_timers: Dictionary = {}
+
+func _start_long_press_timer(touch_index: int) -> void:
+	# 简化版本：立即触发（可以改为延迟触发）
+	drag_to_battle_requested.emit(self)
+	get_viewport().set_input_as_handled()
+
+func _cancel_long_press_timer(touch_index: int) -> void:
+	if touch_index in _long_press_timers:
+		_long_press_timers.erase(touch_index)
 
 
 func _physics_process(delta: float) -> void:

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cct8asucihcnt"]
 
-[ext_resource type="Script" uid="uid://c60a6j32dgam3" path="res://scripts/main/BattleArea.gd" id="1_battlearea"]
+[ext_resource type="Script" uid="uid://diw0bypcm1c3k" path="res://scripts/main/BattleArea.gd" id="1_battlearea"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(50, 767.75)
